@@ -1,21 +1,21 @@
-,PTS,GF,GA,GD,rank
-Man City,100,106,27,79,1
-Man United,81,68,28,40,2
-Tottenham,77,74,36,38,3
-Liverpool,75,84,38,46,4
-Chelsea,70,62,38,24,5
-Arsenal,63,74,51,23,6
-Burnley,54,36,39,-3,7
-Everton,49,44,58,-14,8
-Leicester,47,56,60,-4,9
-Newcastle,44,39,47,-8,10
-Crystal Palace,44,45,55,-10,11
-Bournemouth,44,45,61,-16,12
-West Ham,42,48,68,-20,13
-Watford,41,44,64,-20,14
-Brighton,40,34,54,-20,15
-Huddersfield,37,28,58,-30,16
-Southampton,36,37,56,-19,17
-Swansea,33,28,56,-28,18
-Stoke,33,35,68,-33,19
-West Brom,31,31,56,-25,20
+,team_name,PTS,GF,GA,GD,rank
+0,Man City,100,106,27,79,1
+1,Man United,81,68,28,40,2
+2,Tottenham,77,74,36,38,3
+3,Liverpool,75,84,38,46,4
+4,Chelsea,70,62,38,24,5
+5,Arsenal,63,74,51,23,6
+6,Burnley,54,36,39,-3,7
+7,Everton,49,44,58,-14,8
+8,Leicester,47,56,60,-4,9
+9,Newcastle,44,39,47,-8,10
+10,Crystal Palace,44,45,55,-10,11
+11,Bournemouth,44,45,61,-16,12
+12,West Ham,42,48,68,-20,13
+13,Watford,41,44,64,-20,14
+14,Brighton,40,34,54,-20,15
+15,Huddersfield,37,28,58,-30,16
+16,Southampton,36,37,56,-19,17
+17,Swansea,33,28,56,-28,18
+18,Stoke,33,35,68,-33,19
+19,West Brom,31,31,56,-25,20
