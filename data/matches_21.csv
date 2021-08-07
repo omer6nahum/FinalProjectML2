@@ -1,0 +1,381 @@
+,date,HomeTeam,AwayTeam,HomeGoals,AwayGoals,FTR
+0,2021-05-23,Arsenal,Brighton,2,0,H
+1,2021-05-23,Aston Villa,Chelsea,2,1,H
+2,2021-05-23,Fulham,Newcastle,0,2,A
+3,2021-05-23,Leeds,West Brom,3,1,H
+4,2021-05-23,Leicester,Spurs,2,4,A
+5,2021-05-23,Liverpool,Crystal Palace,2,0,H
+6,2021-05-23,Man City,Everton,5,0,H
+7,2021-05-23,Sheffield Utd,Burnley,1,0,H
+8,2021-05-23,West Ham,Southampton,3,0,H
+9,2021-05-23,Wolves,Man Utd,1,2,A
+10,2021-05-19,Everton,Wolves,1,0,H
+11,2021-05-19,Newcastle,Sheffield Utd,1,0,H
+12,2021-05-19,Spurs,Aston Villa,1,2,A
+13,2021-05-19,Crystal Palace,Arsenal,1,3,A
+14,2021-05-19,Burnley,Liverpool,0,3,A
+15,2021-05-19,West Brom,West Ham,1,3,A
+16,2021-05-18,Man Utd,Fulham,1,1,D
+17,2021-05-18,Southampton,Leeds,0,2,A
+18,2021-05-18,Brighton,Man City,3,2,H
+19,2021-05-18,Chelsea,Leicester,2,1,H
+20,2021-05-16,Crystal Palace,Aston Villa,3,2,H
+21,2021-05-16,Spurs,Wolves,2,0,H
+22,2021-05-16,West Brom,Liverpool,1,2,A
+23,2021-05-16,Everton,Sheffield Utd,0,1,A
+24,2021-05-15,Burnley,Leeds,0,4,A
+25,2021-05-15,Southampton,Fulham,3,1,H
+26,2021-05-15,Brighton,West Ham,1,1,D
+27,2021-05-14,Newcastle,Man City,3,4,A
+28,2021-05-13,Aston Villa,Everton,0,0,D
+29,2021-05-13,Man Utd,Liverpool,2,4,A
+30,2021-05-12,Chelsea,Arsenal,0,1,A
+31,2021-05-11,Man Utd,Leicester,1,2,A
+32,2021-05-11,Southampton,Crystal Palace,3,1,H
+33,2021-05-10,Fulham,Burnley,0,2,A
+34,2021-05-09,Wolves,Brighton,2,1,H
+35,2021-05-09,Aston Villa,Man Utd,1,3,A
+36,2021-05-09,West Ham,Everton,0,1,A
+37,2021-05-09,Arsenal,West Brom,3,1,H
+38,2021-05-08,Man City,Chelsea,1,2,A
+39,2021-05-08,Liverpool,Southampton,2,0,H
+40,2021-05-08,Leeds,Spurs,3,1,H
+41,2021-05-08,Sheffield Utd,Crystal Palace,0,2,A
+42,2021-05-07,Leicester,Newcastle,2,4,A
+43,2021-05-03,West Brom,Wolves,1,1,D
+44,2021-05-03,Burnley,West Ham,1,2,A
+45,2021-05-02,Newcastle,Arsenal,0,2,A
+46,2021-05-02,Spurs,Sheffield Utd,4,0,H
+47,2021-05-01,Crystal Palace,Man City,0,2,A
+48,2021-05-01,Brighton,Leeds,2,0,H
+49,2021-05-01,Chelsea,Fulham,2,0,H
+50,2021-05-01,Everton,Aston Villa,1,2,A
+51,2021-04-30,Southampton,Leicester,1,1,D
+52,2021-04-26,Leicester,Crystal Palace,2,1,H
+53,2021-04-25,Wolves,Burnley,0,4,A
+54,2021-04-25,Leeds,Man Utd,0,0,D
+55,2021-04-25,Aston Villa,West Brom,2,2,D
+56,2021-04-24,Liverpool,Newcastle,1,1,D
+57,2021-04-24,West Ham,Chelsea,0,1,A
+58,2021-04-24,Sheffield Utd,Brighton,1,0,H
+59,2021-04-23,Arsenal,Everton,0,1,A
+60,2021-04-22,Leicester,West Brom,3,0,H
+61,2021-04-21,Spurs,Southampton,2,1,H
+62,2021-04-21,Aston Villa,Man City,1,2,A
+63,2021-04-20,Chelsea,Brighton,0,0,D
+64,2021-04-19,Leeds,Liverpool,1,1,D
+65,2021-04-18,Arsenal,Fulham,1,1,D
+66,2021-04-18,Man Utd,Burnley,3,1,H
+67,2021-04-17,Newcastle,West Ham,3,2,H
+68,2021-04-17,Wolves,Sheffield Utd,1,0,H
+69,2021-04-16,Everton,Spurs,2,2,D
+70,2021-04-12,West Brom,Southampton,3,0,H
+71,2021-04-12,Brighton,Everton,0,0,D
+72,2021-04-11,Burnley,Newcastle,1,2,A
+73,2021-04-11,West Ham,Leicester,3,2,H
+74,2021-04-11,Spurs,Man Utd,1,3,A
+75,2021-04-11,Sheffield Utd,Arsenal,0,3,A
+76,2021-04-10,Man City,Leeds,1,2,A
+77,2021-04-10,Liverpool,Aston Villa,2,1,H
+78,2021-04-10,Crystal Palace,Chelsea,1,4,A
+79,2021-04-09,Fulham,Wolves,0,1,A
+80,2021-04-05,Everton,Crystal Palace,1,1,D
+81,2021-04-05,Wolves,West Ham,2,3,A
+82,2021-04-04,Southampton,Burnley,3,2,H
+83,2021-04-04,Newcastle,Spurs,2,2,D
+84,2021-04-04,Aston Villa,Fulham,3,1,H
+85,2021-04-04,Man Utd,Brighton,2,1,H
+86,2021-04-03,Chelsea,West Brom,2,5,A
+87,2021-04-03,Leeds,Sheffield Utd,2,1,H
+88,2021-04-03,Leicester,Man City,0,2,A
+89,2021-04-03,Arsenal,Liverpool,0,3,A
+90,2021-03-21,West Ham,Arsenal,3,3,D
+91,2021-03-21,Aston Villa,Spurs,0,2,A
+92,2021-03-20,Brighton,Newcastle,3,0,H
+93,2021-03-19,Fulham,Leeds,1,2,A
+94,2021-03-15,Wolves,Liverpool,0,1,A
+95,2021-03-14,Southampton,Brighton,1,2,A
+96,2021-03-14,Leicester,Sheffield Utd,5,0,H
+97,2021-03-14,Arsenal,Spurs,2,1,H
+98,2021-03-14,Man Utd,West Ham,1,0,H
+99,2021-03-13,Leeds,Chelsea,0,0,D
+100,2021-03-13,Crystal Palace,West Brom,1,0,H
+101,2021-03-13,Everton,Burnley,1,2,A
+102,2021-03-13,Fulham,Man City,0,3,A
+103,2021-03-12,Newcastle,Aston Villa,1,1,D
+104,2021-03-10,Man City,Southampton,5,2,H
+105,2021-03-08,Chelsea,Everton,2,0,H
+106,2021-03-08,West Ham,Leeds,2,0,H
+107,2021-03-07,West Brom,Newcastle,0,0,D
+108,2021-03-07,Liverpool,Fulham,0,1,A
+109,2021-03-07,Man City,Man Utd,0,2,A
+110,2021-03-07,Spurs,Crystal Palace,4,1,H
+111,2021-03-06,Burnley,Arsenal,1,1,D
+112,2021-03-06,Sheffield Utd,Southampton,0,2,A
+113,2021-03-06,Aston Villa,Wolves,0,0,D
+114,2021-03-06,Brighton,Leicester,1,2,A
+115,2021-03-04,Fulham,Spurs,0,1,A
+116,2021-03-04,West Brom,Everton,0,1,A
+117,2021-03-04,Liverpool,Chelsea,0,1,A
+118,2021-03-03,Burnley,Leicester,1,1,D
+119,2021-03-03,Crystal Palace,Man Utd,0,0,D
+120,2021-03-03,Sheffield Utd,Aston Villa,1,0,H
+121,2021-03-02,Man City,Wolves,4,1,H
+122,2021-03-01,Everton,Southampton,1,0,H
+123,2021-02-28,Crystal Palace,Fulham,0,0,D
+124,2021-02-28,Leicester,Arsenal,1,3,A
+125,2021-02-28,Spurs,Burnley,4,0,H
+126,2021-02-28,Chelsea,Man Utd,0,0,D
+127,2021-02-28,Sheffield Utd,Liverpool,0,2,A
+128,2021-02-27,Man City,West Ham,2,1,H
+129,2021-02-27,West Brom,Brighton,1,0,H
+130,2021-02-27,Leeds,Aston Villa,0,1,A
+131,2021-02-27,Newcastle,Wolves,1,1,D
+132,2021-02-23,Leeds,Southampton,3,0,H
+133,2021-02-22,Brighton,Crystal Palace,1,2,A
+134,2021-02-21,West Ham,Spurs,2,1,H
+135,2021-02-21,Aston Villa,Leicester,1,2,A
+136,2021-02-21,Arsenal,Man City,0,1,A
+137,2021-02-21,Man Utd,Newcastle,3,1,H
+138,2021-02-20,Southampton,Chelsea,1,1,D
+139,2021-02-20,Burnley,West Brom,0,0,D
+140,2021-02-20,Liverpool,Everton,0,2,A
+141,2021-02-20,Fulham,Sheffield Utd,1,0,H
+142,2021-02-19,Wolves,Leeds,1,0,H
+143,2021-02-17,Burnley,Fulham,1,1,D
+144,2021-02-17,Everton,Man City,1,3,A
+145,2021-02-15,West Ham,Sheffield Utd,3,0,H
+146,2021-02-15,Chelsea,Newcastle,2,0,H
+147,2021-02-14,Southampton,Wolves,1,2,A
+148,2021-02-14,West Brom,Man Utd,1,1,D
+149,2021-02-14,Arsenal,Leeds,4,2,H
+150,2021-02-14,Everton,Fulham,0,2,A
+151,2021-02-13,Leicester,Liverpool,3,1,H
+152,2021-02-13,Crystal Palace,Burnley,0,3,A
+153,2021-02-13,Man City,Spurs,3,0,H
+154,2021-02-13,Brighton,Aston Villa,0,0,D
+155,2021-02-08,Leeds,Crystal Palace,2,0,H
+156,2021-02-07,Spurs,West Brom,2,0,H
+157,2021-02-07,Wolves,Leicester,0,0,D
+158,2021-02-07,Liverpool,Man City,1,4,A
+159,2021-02-07,Sheffield Utd,Chelsea,1,2,A
+160,2021-02-06,Aston Villa,Arsenal,1,0,H
+161,2021-02-06,Burnley,Brighton,1,1,D
+162,2021-02-06,Newcastle,Southampton,3,2,H
+163,2021-02-06,Fulham,West Ham,0,0,D
+164,2021-02-06,Man Utd,Everton,3,3,D
+165,2021-02-04,Spurs,Chelsea,0,1,A
+166,2021-02-03,Burnley,Man City,0,2,A
+167,2021-02-03,Fulham,Leicester,0,2,A
+168,2021-02-03,Leeds,Everton,1,2,A
+169,2021-02-03,Aston Villa,West Ham,1,3,A
+170,2021-02-03,Liverpool,Brighton,0,1,A
+171,2021-02-02,Sheffield Utd,West Brom,2,1,H
+172,2021-02-02,Wolves,Arsenal,2,1,H
+173,2021-02-02,Man Utd,Southampton,9,0,H
+174,2021-02-02,Newcastle,Crystal Palace,1,2,A
+175,2021-01-31,Chelsea,Burnley,2,0,H
+176,2021-01-31,Leicester,Leeds,1,3,A
+177,2021-01-31,West Ham,Liverpool,1,3,A
+178,2021-01-31,Brighton,Spurs,1,0,H
+179,2021-01-30,Everton,Newcastle,0,2,A
+180,2021-01-30,Crystal Palace,Wolves,1,0,H
+181,2021-01-30,Man City,Sheffield Utd,1,0,H
+182,2021-01-30,West Brom,Fulham,2,2,D
+183,2021-01-30,Arsenal,Man Utd,0,0,D
+184,2021-01-30,Southampton,Aston Villa,0,1,A
+185,2021-01-28,Spurs,Liverpool,1,3,A
+186,2021-01-27,Burnley,Aston Villa,3,2,H
+187,2021-01-27,Chelsea,Wolves,0,0,D
+188,2021-01-27,Brighton,Fulham,0,0,D
+189,2021-01-27,Everton,Leicester,1,1,D
+190,2021-01-27,Man Utd,Sheffield Utd,1,2,A
+191,2021-01-26,Crystal Palace,West Ham,2,3,A
+192,2021-01-26,Newcastle,Leeds,1,2,A
+193,2021-01-26,Southampton,Arsenal,1,3,A
+194,2021-01-26,West Brom,Man City,0,5,A
+195,2021-01-23,Aston Villa,Newcastle,2,0,H
+196,2021-01-21,Liverpool,Burnley,0,1,A
+197,2021-01-20,Man City,Aston Villa,2,0,H
+198,2021-01-20,Fulham,Man Utd,1,2,A
+199,2021-01-19,Leicester,Chelsea,2,0,H
+200,2021-01-19,West Ham,West Brom,2,1,H
+201,2021-01-18,Arsenal,Newcastle,3,0,H
+202,2021-01-17,Sheffield Utd,Spurs,1,3,A
+203,2021-01-17,Liverpool,Man Utd,0,0,D
+204,2021-01-17,Man City,Crystal Palace,4,0,H
+205,2021-01-16,Wolves,West Brom,2,3,A
+206,2021-01-16,Leeds,Brighton,0,1,A
+207,2021-01-16,West Ham,Burnley,1,0,H
+208,2021-01-16,Fulham,Chelsea,0,1,A
+209,2021-01-16,Leicester,Southampton,2,0,H
+210,2021-01-14,Arsenal,Crystal Palace,0,0,D
+211,2021-01-13,Man City,Brighton,1,0,H
+212,2021-01-13,Spurs,Fulham,1,1,D
+213,2021-01-12,Sheffield Utd,Newcastle,1,0,H
+214,2021-01-12,Burnley,Man Utd,0,1,A
+215,2021-01-12,Wolves,Everton,1,2,A
+216,2021-01-04,Southampton,Liverpool,1,0,H
+217,2021-01-03,Newcastle,Leicester,1,2,A
+218,2021-01-03,Chelsea,Man City,1,3,A
+219,2021-01-02,Spurs,Leeds,3,0,H
+220,2021-01-02,Crystal Palace,Sheffield Utd,2,0,H
+221,2021-01-02,Brighton,Wolves,3,3,D
+222,2021-01-02,West Brom,Arsenal,0,4,A
+223,2021-01-01,Everton,West Ham,0,1,A
+224,2021-01-01,Man Utd,Aston Villa,2,1,H
+225,2020-12-30,Newcastle,Liverpool,0,0,D
+226,2020-12-29,Brighton,Arsenal,0,1,A
+227,2020-12-29,Burnley,Sheffield Utd,1,0,H
+228,2020-12-29,Southampton,West Ham,0,0,D
+229,2020-12-29,West Brom,Leeds,0,5,A
+230,2020-12-29,Man Utd,Wolves,1,0,H
+231,2020-12-28,Crystal Palace,Leicester,1,1,D
+232,2020-12-28,Chelsea,Aston Villa,1,1,D
+233,2020-12-27,Leeds,Burnley,1,0,H
+234,2020-12-27,West Ham,Brighton,2,2,D
+235,2020-12-27,Liverpool,West Brom,1,1,D
+236,2020-12-27,Wolves,Spurs,1,1,D
+237,2020-12-26,Arsenal,Chelsea,3,1,H
+238,2020-12-26,Man City,Newcastle,2,0,H
+239,2020-12-26,Sheffield Utd,Everton,0,1,A
+240,2020-12-26,Leicester,Man Utd,2,2,D
+241,2020-12-26,Aston Villa,Crystal Palace,3,0,H
+242,2020-12-26,Fulham,Southampton,0,0,D
+243,2020-12-21,Burnley,Wolves,2,1,H
+244,2020-12-21,Chelsea,West Ham,3,0,H
+245,2020-12-20,Brighton,Sheffield Utd,1,1,D
+246,2020-12-20,Spurs,Leicester,0,2,A
+247,2020-12-20,Man Utd,Leeds,6,2,H
+248,2020-12-20,West Brom,Aston Villa,0,3,A
+249,2020-12-19,Crystal Palace,Liverpool,0,7,A
+250,2020-12-19,Southampton,Man City,0,1,A
+251,2020-12-19,Everton,Arsenal,2,1,H
+252,2020-12-19,Newcastle,Fulham,1,1,D
+253,2020-12-17,Aston Villa,Burnley,0,0,D
+254,2020-12-17,Sheffield Utd,Man Utd,2,3,A
+255,2020-12-16,Arsenal,Southampton,1,1,D
+256,2020-12-16,Leeds,Newcastle,5,2,H
+257,2020-12-16,Leicester,Everton,0,2,A
+258,2020-12-16,Fulham,Brighton,0,0,D
+259,2020-12-16,Liverpool,Spurs,2,1,H
+260,2020-12-16,West Ham,Crystal Palace,1,1,D
+261,2020-12-15,Wolves,Chelsea,2,1,H
+262,2020-12-15,Man City,West Brom,1,1,D
+263,2020-12-13,Southampton,Sheffield Utd,3,0,H
+264,2020-12-13,Crystal Palace,Spurs,1,1,D
+265,2020-12-13,Fulham,Liverpool,1,1,D
+266,2020-12-13,Arsenal,Burnley,0,1,A
+267,2020-12-13,Leicester,Brighton,3,0,H
+268,2020-12-12,Wolves,Aston Villa,0,1,A
+269,2020-12-12,Newcastle,West Brom,2,1,H
+270,2020-12-12,Man Utd,Man City,0,0,D
+271,2020-12-12,Everton,Chelsea,1,0,H
+272,2020-12-11,Leeds,West Ham,1,2,A
+273,2020-12-07,Brighton,Southampton,1,2,A
+274,2020-12-06,West Brom,Crystal Palace,1,5,A
+275,2020-12-06,Sheffield Utd,Leicester,1,2,A
+276,2020-12-06,Spurs,Arsenal,2,0,H
+277,2020-12-06,Liverpool,Wolves,4,0,H
+278,2020-12-05,West Ham,Man Utd,1,3,A
+279,2020-12-05,Chelsea,Leeds,3,1,H
+280,2020-12-05,Burnley,Everton,1,1,D
+281,2020-12-05,Man City,Fulham,2,0,H
+282,2020-11-30,Leicester,Fulham,1,2,A
+283,2020-11-30,West Ham,Aston Villa,2,1,H
+284,2020-11-29,Southampton,Man Utd,2,3,A
+285,2020-11-29,Chelsea,Spurs,0,0,D
+286,2020-11-29,Arsenal,Wolves,1,2,A
+287,2020-11-28,Brighton,Liverpool,1,1,D
+288,2020-11-28,Man City,Burnley,5,0,H
+289,2020-11-28,Everton,Leeds,0,1,A
+290,2020-11-28,West Brom,Sheffield Utd,1,0,H
+291,2020-11-27,Crystal Palace,Newcastle,0,2,A
+292,2020-11-23,Burnley,Crystal Palace,1,0,H
+293,2020-11-23,Wolves,Southampton,1,1,D
+294,2020-11-22,Fulham,Everton,2,3,A
+295,2020-11-22,Sheffield Utd,West Ham,0,1,A
+296,2020-11-22,Leeds,Arsenal,0,0,D
+297,2020-11-22,Liverpool,Leicester,3,0,H
+298,2020-11-21,Newcastle,Chelsea,0,2,A
+299,2020-11-21,Aston Villa,Brighton,1,2,A
+300,2020-11-21,Spurs,Man City,2,0,H
+301,2020-11-21,Man Utd,West Brom,1,0,H
+302,2020-11-08,West Brom,Spurs,0,1,A
+303,2020-11-08,Leicester,Wolves,1,0,H
+304,2020-11-08,Man City,Liverpool,1,1,D
+305,2020-11-08,Arsenal,Aston Villa,0,3,A
+306,2020-11-07,Everton,Man Utd,1,3,A
+307,2020-11-07,Crystal Palace,Leeds,4,1,H
+308,2020-11-07,Chelsea,Sheffield Utd,4,1,H
+309,2020-11-07,West Ham,Fulham,1,0,H
+310,2020-11-06,Brighton,Burnley,0,0,D
+311,2020-11-06,Southampton,Newcastle,2,0,H
+312,2020-11-02,Fulham,West Brom,2,0,H
+313,2020-11-02,Leeds,Leicester,1,4,A
+314,2020-11-01,Aston Villa,Southampton,3,4,A
+315,2020-11-01,Newcastle,Everton,2,1,H
+316,2020-11-01,Man Utd,Arsenal,0,1,A
+317,2020-11-01,Spurs,Brighton,2,1,H
+318,2020-10-31,Burnley,Chelsea,0,3,A
+319,2020-10-31,Liverpool,West Ham,2,1,H
+320,2020-10-31,Sheffield Utd,Man City,0,1,A
+321,2020-10-30,Wolves,Crystal Palace,2,0,H
+322,2020-10-26,Brighton,West Brom,1,1,D
+323,2020-10-26,Burnley,Spurs,0,1,A
+324,2020-10-25,Southampton,Everton,2,0,H
+325,2020-10-25,Wolves,Newcastle,1,1,D
+326,2020-10-25,Arsenal,Leicester,0,1,A
+327,2020-10-24,West Ham,Man City,1,1,D
+328,2020-10-24,Fulham,Crystal Palace,1,2,A
+329,2020-10-24,Man Utd,Chelsea,0,0,D
+330,2020-10-24,Liverpool,Sheffield Utd,2,1,H
+331,2020-10-23,Aston Villa,Leeds,0,3,A
+332,2020-10-19,West Brom,Burnley,0,0,D
+333,2020-10-19,Leeds,Wolves,0,1,A
+334,2020-10-18,Sheffield Utd,Fulham,1,1,D
+335,2020-10-18,Crystal Palace,Brighton,1,1,D
+336,2020-10-18,Spurs,West Ham,3,3,D
+337,2020-10-18,Leicester,Aston Villa,0,1,A
+338,2020-10-17,Everton,Liverpool,2,2,D
+339,2020-10-17,Chelsea,Southampton,3,3,D
+340,2020-10-17,Man City,Arsenal,1,0,H
+341,2020-10-17,Newcastle,Man Utd,1,4,A
+342,2020-10-04,Leicester,West Ham,0,3,A
+343,2020-10-04,Southampton,West Brom,2,0,H
+344,2020-10-04,Arsenal,Sheffield Utd,2,1,H
+345,2020-10-04,Wolves,Fulham,1,0,H
+346,2020-10-04,Man Utd,Spurs,1,6,A
+347,2020-10-04,Aston Villa,Liverpool,7,2,H
+348,2020-10-03,Chelsea,Crystal Palace,4,0,H
+349,2020-10-03,Everton,Brighton,4,2,H
+350,2020-10-03,Leeds,Man City,1,1,D
+351,2020-10-03,Newcastle,Burnley,3,1,H
+352,2020-09-28,Fulham,Aston Villa,0,3,A
+353,2020-09-28,Liverpool,Arsenal,3,1,H
+354,2020-09-27,Sheffield Utd,Leeds,0,1,A
+355,2020-09-27,Spurs,Newcastle,1,1,D
+356,2020-09-27,Man City,Leicester,2,5,A
+357,2020-09-27,West Ham,Wolves,4,0,H
+358,2020-09-26,West Brom,Chelsea,3,3,D
+359,2020-09-26,Burnley,Southampton,0,1,A
+360,2020-09-26,Brighton,Man Utd,2,3,A
+361,2020-09-26,Crystal Palace,Everton,1,2,A
+362,2020-09-21,Aston Villa,Sheffield Utd,1,0,H
+363,2020-09-21,Wolves,Man City,1,3,A
+364,2020-09-20,Southampton,Spurs,2,5,A
+365,2020-09-20,Newcastle,Brighton,0,3,A
+366,2020-09-20,Chelsea,Liverpool,0,2,A
+367,2020-09-20,Leicester,Burnley,4,2,H
+368,2020-09-19,Everton,West Brom,5,2,H
+369,2020-09-19,Leeds,Fulham,4,3,H
+370,2020-09-19,Man Utd,Crystal Palace,1,3,A
+371,2020-09-19,Arsenal,West Ham,2,1,H
+372,2020-09-14,Sheffield Utd,Wolves,0,2,A
+373,2020-09-14,Brighton,Chelsea,1,3,A
+374,2020-09-13,West Brom,Leicester,0,3,A
+375,2020-09-13,Spurs,Everton,0,1,A
+376,2020-09-12,Fulham,Arsenal,0,3,A
+377,2020-09-12,Crystal Palace,Southampton,1,0,H
+378,2020-09-12,Liverpool,Leeds,4,3,H
+379,2020-09-12,West Ham,Newcastle,0,2,A
