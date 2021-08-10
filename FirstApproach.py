@@ -1,3 +1,4 @@
+import pandas as pd
 from models.LinReg import LinReg
 from Preprocess import create_train_test
 
@@ -10,6 +11,12 @@ class FirstApproach:
         assert type(model) in model_options
         assert model.is_fitted
         self.model = model
+
+    def predict_table(self, X_test, z_test):
+        y_pred = self.model.predict(X_test)
+        pred_table = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
+        pred_table_df = pd.DataFrame(data=pred_table)
+        return pred_table_df
 
 
 if __name__ == '__main__':
@@ -29,3 +36,7 @@ if __name__ == '__main__':
         first_approach_model_not_fitted = FirstApproach(lin_reg_non_fitted)
     except AssertionError:
         print('Success.')
+
+    # Validate predict table:
+    pred_table = first_approach_model_fitted_by_function.predict_table(x_test, z_test)
+    print(pred_table)
