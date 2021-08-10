@@ -100,7 +100,10 @@ def create_x_y_z(year, approach, prefix_path=''):
         raise ValueError('Not an approach')
 
 
-def create_train_test(test_year, approach, prefix_path=''):
+def load_train_test(test_year, approach, prefix_path='', dir_path=None):
+    if dir_path is None:
+        dir_path = 'pickles/data/'
+
     years = range(15, 22)
     x_train = []
     y_train = []
@@ -109,7 +112,7 @@ def create_train_test(test_year, approach, prefix_path=''):
     z_train = []
     z_test = []
     for year in tqdm(years):
-        x, y, z = create_x_y_z(year, approach, prefix_path)
+        x, y, z = load_x_y_z_pickle(year, approach, prefix_path + dir_path)
         if year == test_year:
             x_test.append(x)
             y_test.append(y)
@@ -128,15 +131,19 @@ def create_train_test(test_year, approach, prefix_path=''):
     return x_train, x_test, y_train, y_test, z_train, z_test
 
 
-def dump_train_test_pickle(dir_path, test_year=21, approach=1):
-    path = dir_path + f'test_year_{test_year}_approach_{approach}'
-    data = create_train_test(test_year=test_year, approach=approach)
+def dump_x_y_z_pickle(year, approach, dir_path=None):
+    if dir_path is None:
+        dir_path = 'pickles/data/'
+    path = dir_path + f'year_{year}_approach_{approach}.pkl'
+    data = create_x_y_z(year, approach)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
 
-def load_train_test_pickle(dir_path, test_year=21, approach=1):
-    path = dir_path + f'test_year_{test_year}_approach_{approach}'
+def load_x_y_z_pickle(year, approach, dir_path=None):
+    if dir_path is None:
+        dir_path = 'pickles/data/'
+    path = dir_path + f'year_{year}_approach_{approach}.pkl'
     with open(path, 'rb') as f:
         data = pickle.load(f)
     # data = x_train, x_test, y_train, y_test, z_train, z_test
@@ -149,8 +156,8 @@ if __name__ == '__main__':
     # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2)
     # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
 
-    for test_year in range(21, 14, -1):
+    for year in range(15, 22):
         for approach in [2, 1]:
-            dump_train_test_pickle(dir_path='pickles/data/', test_year=test_year, approach=approach)
+            dump_x_y_z_pickle(year, approach)
 
 
