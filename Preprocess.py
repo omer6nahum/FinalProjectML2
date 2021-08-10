@@ -4,7 +4,7 @@ import pickle
 from tqdm import tqdm
 
 
-def create_squad(team_in_season_df, k=None):
+def create_squad(team_in_season_df, k=None, prefix_path=''):
     """
     :param team_name:
     :param year: season year (2 figures, e.g: 15)
@@ -18,7 +18,7 @@ def create_squad(team_in_season_df, k=None):
              'mid': 5,
              'att': 5}
 
-    features_pickle_path = 'data/pickles/features_dict.pkl'
+    features_pickle_path = prefix_path + 'data/pickles/features_dict.pkl'
     with open(features_pickle_path, 'rb') as f:
         features_dict = pickle.load(f)
 
@@ -45,38 +45,38 @@ def create_position_category_data(data, position_category, k, features_to_drop):
     return np.array(res.head(k).values.flatten()), res.tail(res.shape[0] - k), min(res.shape[0], k)
 
 
-def create_x_y_z_approach1(year):
-    table_path = f'data/tables/table_{year}.csv'
+def create_x_y_z_approach1(year, prefix_path=''):
+    table_path = prefix_path + f'data/tables/table_{year}.csv'
     table = pd.read_csv(table_path)
 
     x = []  # x_i is a squad representation
     y = []  # y_i is number of points
     z = []  # z_i is team name
 
-    path = f'data/players/players_{year}.csv'
+    path = prefix_path + f'data/players/players_{year}.csv'
     data = pd.read_csv(path)
 
     for i, row in table.iterrows():
-        x.append(create_squad(data[data['club_name'] == row['team_name']]))  # x_i is a team's squad
+        x.append(create_squad(data[data['club_name'] == row['team_name']], prefix_path=prefix_path))  # x_i is a team's squad
         y.append(float(row['PTS']))  # y_i is number of points at the end of the season
         z.append(row['team_name'])
     return np.vstack(x), np.squeeze(np.vstack(y)), np.vstack(z)
 
 
-def create_x_y_z_approach2(year):
-    all_matches_path = f'data/matches/matches_{year}.csv'
+def create_x_y_z_approach2(year, prefix_path=''):
+    all_matches_path = prefix_path + f'data/matches/matches_{year}.csv'
     all_matches = pd.read_csv(all_matches_path)
 
     x = []  # x_i is 2-squads representation
     y = []  # y_i is label from {'H', 'D', 'A'}
     z = []  # z_i is 2d vector: [home_team_name, away_team_name]
 
-    path = f'data/players/players_{year}.csv'
+    path = prefix_path + f'data/players/players_{year}.csv'
     data = pd.read_csv(path)
 
     for i, row in all_matches.iterrows():
-        home_squad = create_squad(data[data['club_name'] == row['HomeTeam']])
-        away_squad = create_squad(data[data['club_name'] == row['AwayTeam']])
+        home_squad = create_squad(data[data['club_name'] == row['HomeTeam']], prefix_path=prefix_path)
+        away_squad = create_squad(data[data['club_name'] == row['AwayTeam']], prefix_path=prefix_path)
         squads = np.concatenate((home_squad, away_squad))
         x.append(squads)
         y.append(row['FTR'])
@@ -85,7 +85,7 @@ def create_x_y_z_approach2(year):
     return np.vstack(x), np.squeeze(np.vstack(y)), np.vstack(z)
 
 
-def create_x_y_z(year, approach):
+def create_x_y_z(year, approach, prefix_path=''):
     """
     :param year: 2 digits
     :param approach: can be one of {1, 2}
@@ -93,14 +93,14 @@ def create_x_y_z(year, approach):
     """
 
     if approach == 1:
-        return create_x_y_z_approach1(year)
+        return create_x_y_z_approach1(year, prefix_path)
     elif approach == 2:
-        return create_x_y_z_approach2(year)
+        return create_x_y_z_approach2(year, prefix_path)
     else:
         raise ValueError('Not an approach')
 
 
-def create_train_test(test_year, approach):
+def create_train_test(test_year, approach, prefix_path=''):
     years = range(15, 22)
     x_train = []
     y_train = []
@@ -109,7 +109,7 @@ def create_train_test(test_year, approach):
     z_train = []
     z_test = []
     for year in tqdm(years):
-        x, y, z = create_x_y_z(year, approach)
+        x, y, z = create_x_y_z(year, approach, prefix_path)
         if year == test_year:
             x_test.append(x)
             y_test.append(y)
