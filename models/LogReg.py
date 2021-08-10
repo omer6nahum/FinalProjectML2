@@ -24,7 +24,7 @@ class LogReg:
         assert X.shape[0] == y.shape[0]
 
         y = np.array([self.labels[y_i] for y_i in y])
-        logreg_model = LogisticRegression(multi_class='multinomial', max_iter=1000)
+        logreg_model = LogisticRegression(multi_class='multinomial', max_iter=1000, solver='lbfgs')
         logreg_model.fit(X, y)
 
         beta = logreg_model.coef_

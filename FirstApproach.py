@@ -1,6 +1,6 @@
 import pandas as pd
 from models.LinReg import LinReg
-from Preprocess import create_train_test
+from Preprocess import load_train_test
 
 model_options = [LinReg]
 
@@ -20,7 +20,7 @@ class FirstApproach:
 
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21,
+    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
                                                                           approach=1,
                                                                           prefix_path='')
 

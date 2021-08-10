@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.linalg import pinv2
 from numpy.linalg import LinAlgError, inv
-from Preprocess import create_train_test
+from Preprocess import load_train_test
 
 
 class LinReg:
@@ -54,7 +54,7 @@ class LinReg:
 
 if __name__ == '__main__':
     # LinReg, First Approach:
-    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21,
+    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
                                                                           approach=1,
                                                                           prefix_path='../')
 
