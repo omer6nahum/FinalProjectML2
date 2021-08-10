@@ -9,6 +9,7 @@ class LogReg:
         # self.beta = None
         # self.intercept = None
         self.model = None
+        self.labels = {'H': 0, 'D': 1, 'A': 2}
 
     def fit(self, X, y):
         """
@@ -21,8 +22,10 @@ class LogReg:
         assert isinstance(y, np.ndarray)
         assert X.shape[0] == y.shape[0]
 
+        y = np.array([self.labels[y_i] for y_i in y])
         logreg_model = LogisticRegression(multi_class='multinomial')
         logreg_model.fit(X, y)
+
 
         beta = logreg_model.coef_
         intercept = logreg_model.intercept_
@@ -50,4 +53,7 @@ class LogReg:
 if __name__ == '__main__':
     # LogReg, First Approach:
     x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2, prefix_path='../')
+    model = LogReg()
+    model.fit(x_train, y_train)
+    model.predict(x_test)
     print(0)
