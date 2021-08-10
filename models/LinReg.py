@@ -73,5 +73,5 @@ if __name__ == '__main__':
     print(true_table)
 
     # Pickle and load model params:
-    lin_reg.pickle_params('../data/pickles/models/lin_reg_ver1.pkl')
-    lin_reg.load_params('../data/pickles/models/lin_reg_ver1.pkl')
+    lin_reg.pickle_params('../pickles/models/lin_reg_ver1.pkl')
+    lin_reg.load_params('../pickles/models/lin_reg_ver1.pkl')

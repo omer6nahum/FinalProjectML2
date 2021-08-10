@@ -22,7 +22,7 @@ if __name__ == '__main__':
     lin_reg_fitted_by_load = LinReg()
     lin_reg_non_fitted = LinReg()
     lin_reg_fitted_by_function.fit(x_train, y_train)
-    lin_reg_fitted_by_load.load_params('data/pickles/models/lin_reg_ver1.pkl')
+    lin_reg_fitted_by_load.load_params('pickles/models/lin_reg_ver1.pkl')
     first_approach_model_fitted_by_function = FirstApproach(lin_reg_fitted_by_function)
     first_approach_model_fitted_by_load = FirstApproach(lin_reg_fitted_by_load)
     try:
