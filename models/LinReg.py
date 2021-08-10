@@ -47,6 +47,7 @@ class LinReg:
         X_new = np.append(X_new, np.ones((X_new.shape[0], 1)), axis=1)
         return np.matmul(X_new, self.beta)
 
+    # TODO: find an alternative for ANOVA for the case k > n.
     def ANOVA(self):
         """
         Perform F test and calculate all SS, MS values.

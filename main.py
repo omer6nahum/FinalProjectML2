@@ -20,6 +20,3 @@ if __name__ == '__main__':
     true_table = pd.DataFrame(data=clubs_2021_true)
     print(predicted_table)
     print(true_table)
-
-    # Verify ANOVA:
-    print(lin_reg.ANOVA())  # TODO(omermadmon): resolve bug (negative residuals dof)
