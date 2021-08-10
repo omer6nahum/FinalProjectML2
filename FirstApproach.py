@@ -21,7 +21,8 @@ class FirstApproach:
         """
         y_pred = self.model.predict(X_test)
         pred_table = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
-        pred_table_df = pd.DataFrame(data=pred_table)
+        pred_table_df = pd.DataFrame(data=pred_table, columns=['team_name', 'PTS'])
+        pred_table_df['team_name'] = pred_table_df['team_name'].apply(lambda l: l[0])
         return pred_table_df
 
 

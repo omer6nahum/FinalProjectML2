@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import pickle
-from tqdm import tqdm
 
 
 def create_squad(team_in_season_df, k=None, prefix_path=''):
@@ -111,7 +110,7 @@ def load_train_test(test_year, approach, prefix_path='', dir_path=None):
     y_test = []
     z_train = []
     z_test = []
-    for year in tqdm(years):
+    for year in years:
         x, y, z = load_x_y_z_pickle(year, approach, prefix_path + dir_path)
         if year == test_year:
             x_test.append(x)
