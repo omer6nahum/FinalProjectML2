@@ -2,8 +2,11 @@ import pandas as pd
 from models.LogReg import LogReg
 from Preprocess import load_train_test
 from random import random
+from models.BasicNN import BasicNN
+from main import LABELS, LABELS_REV
+import numpy as np
 
-model_options = [LogReg]
+model_options = [LogReg, BasicNN]
 ranking_method_options = ['expectation', 'simulation']
 
 
@@ -36,6 +39,19 @@ class SecondApproach:
         pred_table_df = pred_table_df.sort_values('PTS', ascending=False)
         pred_table_df = pred_table_df.reset_index(drop=True)
         return pred_table_df
+
+    def accuracy(self, X_test, y_test):
+        assert X_test.shape[0] == y_test.shape[0]
+        y_pred = self.model.predict(X_test)
+        y_pred = np.array([LABELS_REV[np.argmax(y_pred[i])] for i in range(y_pred.shape[0])])
+        num_true = 0
+        num_total = 0
+
+        for i in range(y_pred.shape[0]):
+            num_total += 1
+            num_true += 1 if y_test[i] == y_pred[i] else 0
+
+        return num_true / num_total
 
     @staticmethod
     def expectation(teams, probs, z_test):
@@ -84,10 +100,13 @@ if __name__ == '__main__':
                                                                           approach=2,
                                                                           prefix_path='')
 
-    log_reg = LogReg()
-    log_reg.fit(x_train, y_train)
-    second_approach = SecondApproach(log_reg)
+    # model = LogReg()
+    model = BasicNN(input_shape=x_train.shape[1], num_epochs=0, lr=1e-3)
+    model.fit(x_train, y_train)
+    second_approach = SecondApproach(model)
     pred_table_expectation = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
     print(pred_table_expectation)
     pred_table_simulation = second_approach.predict_table(x_test, z_test, ranking_method='simulation')
     print(pred_table_simulation)
+    acc = second_approach.accuracy(x_test, y_test)
+    print(acc)

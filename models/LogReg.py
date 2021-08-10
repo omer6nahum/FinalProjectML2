@@ -2,14 +2,14 @@ import numpy as np
 import pickle
 from sklearn.linear_model import LogisticRegression
 from Preprocess import load_train_test
-
+from main import LABELS, LABELS_REV
 
 class LogReg:
     def __init__(self):
         # self.beta = None
         # self.intercept = None
         self.model = None
-        self.labels = {'H': 0, 'D': 1, 'A': 2}
+        self.labels = LABELS
         self.is_fitted = False
 
     def fit(self, X, y):
@@ -42,7 +42,7 @@ class LogReg:
         """
         return self.model.predict_proba(X_new)
 
-    def pickle_params(self, path):
+    def save_params(self, path):
         """
         Save model params as pickle.
         :param path: path for the params pickle.
@@ -73,5 +73,13 @@ if __name__ == '__main__':
     y_pred = model.predict(x_test)
     print(y_pred)
 
+    res = 0
+    n = 0
+    for i, (pred, z, y_true) in enumerate(zip(y_pred, z_test, y_test)):
+        n += 1
+        # print(int(torch.argmax(pred))
+        res += 1 if y_true == LABELS_REV[int(np.argmax(pred))] else 0
+    print(res/n)
+
     # Pickle model:
-    model.pickle_params('../pickles/models/log_reg_ver1.pkl')
+    model.save_params('../pickles/models/log_reg_ver1.pkl')

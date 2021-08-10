@@ -42,7 +42,7 @@ class LinReg:
         X_new = np.append(X_new, np.ones((X_new.shape[0], 1)), axis=1)
         return np.matmul(X_new, self.beta)
 
-    def pickle_params(self, path):
+    def save_params(self, path):
         """
         Save model params as pickle.
         :param path: path for the params pickle.
@@ -83,5 +83,5 @@ if __name__ == '__main__':
     print(true_table)
 
     # Pickle and load model params:
-    lin_reg.pickle_params('../pickles/models/lin_reg_ver1.pkl')
+    lin_reg.save_params('../pickles/models/lin_reg_ver1.pkl')
     lin_reg.load_params('../pickles/models/lin_reg_ver1.pkl')
