@@ -3,6 +3,7 @@ import pandas as pd
 from scipy import stats
 from scipy.linalg import pinv2
 from numpy.linalg import LinAlgError, inv
+from Preprocess import create_train_test
 
 
 class LinReg:
@@ -53,38 +54,38 @@ class LinReg:
         Perform F test and calculate all SS, MS values.
         :return: ANOVA table.
         """
-        SST = sum([(y_i - self.y.mean())**2 for y_i in self.y])
+        SST = sum([(y_i - self.y.mean()) ** 2 for y_i in self.y])
         y_est = np.matmul(self.X, self.beta)
-        SSRes = sum([(y_i - y_i_est)**2 for y_i, y_i_est in zip(self.y, y_est)])
-        MSRes = SSRes / (self.n-self.p)
+        SSRes = sum([(y_i - y_i_est) ** 2 for y_i, y_i_est in zip(self.y, y_est)])
+        MSRes = SSRes / (self.n - self.p)
         SSR = SST - SSRes
         MSR = SSR / self.k
-        MST = SST/(self.n-1)
+        MST = SST / (self.n - 1)
         F = MSR / MSRes
         pvalue = 1 - stats.f.cdf(F, self.k, self.n - self.p)
 
         Regression = {
-        'SS': SSR,
-        'df': self.k,
-        'MS': MSR,
-        'F-ratio': F,
-        'P value': pvalue
+            'SS': SSR,
+            'df': self.k,
+            'MS': MSR,
+            'F-ratio': F,
+            'P value': pvalue
         }
 
         Residuals = {
-        'SS': SSRes,
-        'df': self.n - self.p,
-        'MS': MSRes,
-        'F-ratio': '---',
-        'P value': '---'
+            'SS': SSRes,
+            'df': self.n - self.p,
+            'MS': MSRes,
+            'F-ratio': '---',
+            'P value': '---'
         }
 
         Total = {
-        'SS': SST,
-        'df': self.n - 1,
-        'MS': MST,
-        'F-ratio': '---',
-        'P value': '---'
+            'SS': SST,
+            'df': self.n - 1,
+            'MS': MST,
+            'F-ratio': '---',
+            'P value': '---'
         }
 
         data = [Regression, Residuals, Total]
@@ -109,3 +110,22 @@ class LinReg:
 
     def load_params(self, path):
         pass
+
+
+if __name__ == '__main__':
+    # LinReg, First Approach:
+    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=1)
+
+    # Fit and predict:
+    lin_reg = LinReg()
+    lin_reg.fit(x_train, y_train)
+    y_pred = lin_reg.predict(x_test)
+
+    # Create tables
+    # TODO(omermadmon): this should be a function of FirstApproach class):
+    clubs_2021_pred = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
+    clubs_2021_true = sorted(zip(z_test, y_test), key=lambda x: x[1], reverse=True)  # TODO: load data of real table
+    predicted_table = pd.DataFrame(data=clubs_2021_pred)
+    true_table = pd.DataFrame(data=clubs_2021_true)
+    print(predicted_table)
+    print(true_table)
