@@ -28,7 +28,7 @@ class LinReg:
         # assert y.shape[1] == 1
 
         self.X, self.y = np.append(X, np.ones((X.shape[0], 1)), axis=1), y
-        self.n, self.k, self.p = X.shape[0], X.shape[1] - 1, X.shape[1]
+        self.n, self.k, self.p = self.X.shape[0], self.X.shape[1] - 1, self.X.shape[1]
         tmp = np.matmul(self.X.T, self.X)
         try:
             tmp = inv(tmp)
