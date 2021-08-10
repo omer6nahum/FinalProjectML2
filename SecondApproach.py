@@ -34,6 +34,7 @@ class SecondApproach:
         pred_table_df = pred_table_df.reset_index(drop=False)
         pred_table_df = pred_table_df.rename({'index': 'team_name'}, axis=1)
         pred_table_df = pred_table_df.sort_values('PTS', ascending=False)
+        pred_table_df = pred_table_df.reset_index(drop=True)
         return pred_table_df
 
     @staticmethod
