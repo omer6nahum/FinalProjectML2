@@ -65,8 +65,13 @@ class LogReg:
 if __name__ == '__main__':
     # LogReg, Second Approach:
     model = LogReg()
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21, approach=2, prefix_path='../')
+    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
+                                                                        approach=2,
+                                                                        prefix_path='../')
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
     y_pred = model.predict(x_test)
     print(y_pred)
+
+    # Pickle model:
+    model.pickle_params('../pickles/models/log_reg_ver1.pkl')
