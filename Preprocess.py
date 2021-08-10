@@ -60,7 +60,7 @@ def create_x_y_z_approach1(year):
         x.append(create_squad(data[data['club_name'] == row['team_name']]))  # x_i is a team's squad
         y.append(float(row['PTS']))  # y_i is number of points at the end of the season
         z.append(row['team_name'])
-    return np.vstack(x), np.vstack(y), np.vstack(z)
+    return np.vstack(x), np.squeeze(np.vstack(y)), np.vstack(z)
 
 
 def create_x_y_z_approach2(year):
@@ -82,7 +82,7 @@ def create_x_y_z_approach2(year):
         y.append(row['FTR'])
         z.append(np.array([row['HomeTeam'], row['AwayTeam']]))
 
-    return np.vstack(x), np.vstack(y), np.vstack(z)
+    return np.vstack(x), np.squeeze(np.vstack(y)), np.vstack(z)
 
 
 def create_x_y_z(year, approach):
@@ -119,10 +119,10 @@ def create_train_test(test_year, approach):
             y_train.append(y)
             z_train.append(z)
     x_train = np.vstack(x_train)
-    y_train = np.vstack(y_train)
+    y_train = np.hstack(y_train)
     z_train = np.vstack(z_train)
     x_test = np.vstack(x_test)
-    y_test = np.vstack(y_test)
+    y_test = np.hstack(y_test)
     z_test = np.vstack(z_test)
 
     return x_train, x_test, y_train, y_test, z_train, z_test
