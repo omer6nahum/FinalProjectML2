@@ -43,10 +43,20 @@ class LinReg:
         return np.matmul(X_new, self.beta)
 
     def pickle_params(self, path):
+        """
+        Save model params as pickle.
+        :param path: path for the params pickle.
+        :return: None
+        """
         with open(path, 'wb') as f:
             pickle.dump(self.beta, f)
 
     def load_params(self, path):
+        """
+        Load model params as pickle.
+        :param path: path of the loaded params.
+        :return:
+        """
         with open(path, 'rb') as f:
             self.beta = pickle.load(f)
         self.is_fitted = True

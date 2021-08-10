@@ -13,6 +13,12 @@ class FirstApproach:
         self.model = model
 
     def predict_table(self, X_test, z_test):
+        """
+        Predict the final table based on the inner models.
+        :param X_test: features of new observations (teams squads representations).
+        :param z_test: teams names corresponding to observations in X_test.
+        :return: a DataFrame of the predicted table (teams and predicted number of points).
+        """
         y_pred = self.model.predict(X_test)
         pred_table = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
         pred_table_df = pd.DataFrame(data=pred_table)

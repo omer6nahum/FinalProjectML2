@@ -15,6 +15,13 @@ class SecondApproach:
         self.model = model
 
     def predict_table(self, X_test, z_test, ranking_method):
+        """
+        Predict the final table based on the inner models.
+        :param X_test: features of new observations (season matches).
+        :param z_test: teams names in matches corresponding to observations in X_test.
+        :param ranking_method: either 'expectation' or 'simulation'.
+        :return: a DataFrame of the predicted table (teams and predicted number of points).
+        """
         assert ranking_method in ranking_method_options
         probs = self.model.predict(X_test)
         teams = set(z_test.flatten())
@@ -31,6 +38,13 @@ class SecondApproach:
 
     @staticmethod
     def expectation(teams, probs, z_test):
+        """
+        Calculate the expected number of points for each teams based on the given probabilities.
+        :param teams: relevant team names.
+        :param probs: probabilities for match outcomes for each match.
+        :param z_test: teams names in matches corresponding to observations in X_test.
+        :return: a dictionary mapping teams to expected number of points.
+        """
         table = {team: 0 for team in teams}
         for pr, match_teams in zip(probs, z_test):
             hometeam, awayteam = match_teams[0], match_teams[1]
@@ -41,6 +55,14 @@ class SecondApproach:
 
     @staticmethod
     def simulation(teams, probs, z_test):
+        """
+        Simulate season matches based on the given probabilities, and calculate number of points.
+        # TODO: introduce a parameter for number of simulations for each match.
+        :param teams: relevant team names.
+        :param probs: probabilities for match outcomes for each match.
+        :param z_test: teams names in matches corresponding to observations in X_test.
+        :return: a dictionary mapping teams to expected number of points.
+        """
         table = {team: 0 for team in teams}
         for pr, match_teams in zip(probs, z_test):
             hometeam, awayteam = match_teams[0], match_teams[1]
