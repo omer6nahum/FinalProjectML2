@@ -18,7 +18,7 @@ def create_squad(team_in_season_df, k=None, prefix_path=''):
              'mid': 5,
              'att': 5}
 
-    features_pickle_path = prefix_path + 'data/pickles/features_dict.pkl'
+    features_pickle_path = prefix_path + 'pickles/data/features_dict.pkl'
     with open(features_pickle_path, 'rb') as f:
         features_dict = pickle.load(f)
 
@@ -128,11 +128,29 @@ def create_train_test(test_year, approach, prefix_path=''):
     return x_train, x_test, y_train, y_test, z_train, z_test
 
 
-if __name__ == '__main__':
-    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=1)
-    print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
-    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2)
-    print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
+def dump_train_test_pickle(dir_path, test_year=21, approach=1):
+    path = dir_path + f'test_year_{test_year}_approach_{approach}'
+    data = create_train_test(test_year=test_year, approach=approach)
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
 
+
+def load_train_test_pickle(dir_path, test_year=21, approach=1):
+    path = dir_path + f'test_year_{test_year}_approach_{approach}'
+    with open(path, 'rb') as f:
+        data = pickle.load(f)
+    # data = x_train, x_test, y_train, y_test, z_train, z_test
+    return data
+
+
+if __name__ == '__main__':
+    # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=1)
+    # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
+    # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2)
+    # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
+
+    for test_year in range(21, 14, -1):
+        for approach in [2, 1]:
+            dump_train_test_pickle(dir_path='pickles/data/', test_year=test_year, approach=approach)
 
 
