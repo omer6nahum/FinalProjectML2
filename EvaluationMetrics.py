@@ -10,12 +10,10 @@ from SecondApproach import SecondApproach
 TEAM_NAME, PTS = 'team_name', 'PTS'
 
 if __name__ == '__main__':
-    # Ground truth table schema: ['team_name', 'PTS']
     gd_table = pd.read_csv('data/tables/table_21.csv')[['team_name', 'PTS']]
     print(gd_table)
     print()
 
-    # FirstApproach table schema: [0, 1]
     x_train_1, x_test_1, y_train_1, \
     y_test_1, z_train_1, z_test_1 = load_train_test(test_year=21,
                                                     approach=1,
@@ -26,7 +24,6 @@ if __name__ == '__main__':
     print(tbl1)
     print()
 
-    # SecondApproach table schema: [, ]
     x_train_2, x_test_2, y_train_2, \
     y_test_2, z_train_2, z_test_2 = load_train_test(test_year=21,
                                                     approach=2,
