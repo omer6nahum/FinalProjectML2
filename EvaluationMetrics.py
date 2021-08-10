@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from Preprocess import load_train_test
 from models.LogReg import LogReg
@@ -6,16 +7,55 @@ from FirstApproach import FirstApproach
 from SecondApproach import SecondApproach
 
 # TODO: implement evaluation ranking metrics
-TEAM_NAME, PTS = 'team_name', 'PTS'
+TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 
 
-def hamming(tabl1, tabl2):
+def add_adjusted_ranks(table1, table2):
     # TODO: add documentation.
-    assert set(tabl1[TEAM_NAME]) == set(tabl2[TEAM_NAME])
-    teams = set(tabl1[TEAM_NAME])
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    table1_adj = table1.copy()
+    table2_adj = table2.copy()
+    adj_ranks = [1] + \
+                [2, 2.25, 2.5] + \
+                [3, 3.25, 3.5] + \
+                list(np.arange(4, 5.555, 1/6)) + \
+                [6, 6.25, 6.5]
+    table1_adj[ADJ_RANK] = adj_ranks
+    table2_adj[ADJ_RANK] = adj_ranks
+    return table1_adj, table2_adj
+
+
+def add_regular_ranks(table1, table2):
+    # TODO: add documentation.
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    table1_adj = table1.copy()
+    table2_adj = table2.copy()
+    table1_adj[RANK] = range(1, 21)
+    table2_adj[RANK] = range(1, 21)
+    return table1_adj, table2_adj
+
+
+def weighted_hamming(predicted_table, ground_truth):
+    # TODO: add documentation.
+    assert set(predicted_table[TEAM_NAME]) == set(ground_truth[TEAM_NAME])
+    teams = set(predicted_table[TEAM_NAME])
     dist = 0
     for team in teams:
-        dist += abs(pd.Index(tabl1[TEAM_NAME]).get_loc(team) - pd.Index(tabl2[TEAM_NAME]).get_loc(team))
+        predicted_idx = pd.Index(predicted_table[TEAM_NAME]).get_loc(team)
+        ground_truth_index = pd.Index(ground_truth[TEAM_NAME]).get_loc(team)
+        curr_dist = abs(predicted_idx - ground_truth_index)
+        normalized_dist = curr_dist / max(ground_truth_index, 20 - ground_truth_index)
+        dist += normalized_dist
+    return dist
+
+
+def hamming(table1, table2):
+    # TODO: add documentation.
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    teams = set(table1[TEAM_NAME])
+    dist = 0
+    for team in teams:
+        dist += abs(pd.Index(table1[TEAM_NAME]).get_loc(team) - pd.Index(table2[TEAM_NAME]).get_loc(team))
     return dist
 
 
@@ -44,6 +84,10 @@ if __name__ == '__main__':
     print(tbl2)
     print()
 
-    # Test hamming eval function:
-    print(f'hamming(ground truth vs. lin_reg): {hamming(gd_table, tbl1)}')
-    print(f'hamming(ground truth vs. log_reg): {hamming(gd_table, tbl2)}')
+    # Test hamming eval functions:
+    print(f'hamming(ground truth vs. lin_reg): {hamming(tbl1, gd_table)}')
+    print(f'hamming(ground truth vs. log_reg): {hamming(tbl2, gd_table)}')
+    print(f'weighted_hamming(ground truth vs. lin_reg): {weighted_hamming(tbl1, gd_table)}')
+    print(f'weighted_hamming(ground truth vs. log_reg): {weighted_hamming(tbl2, gd_table)}')
+
+
