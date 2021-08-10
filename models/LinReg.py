@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -106,10 +108,12 @@ class LinReg:
         return 1 - (self.anova_table.loc['Residuals']['MS'] / self.anova_table.loc['Total']['MS'])
 
     def pickle_params(self, path):
-        pass
+        with open(path, 'wb') as f:
+            pickle.dump(self.beta, f)
 
     def load_params(self, path):
-        pass
+        with open(path, 'rb') as f:
+            self.beta = pickle.load(f)
 
 
 if __name__ == '__main__':
@@ -131,3 +135,7 @@ if __name__ == '__main__':
     true_table = pd.DataFrame(data=clubs_2021_true)
     print(predicted_table)
     print(true_table)
+
+    # Pickle and load model params:
+    lin_reg.pickle_params('../data/pickles/models/lin_reg_ver1.pkl')
+    lin_reg.load_params('../data/pickles/models/lin_reg_ver1.pkl')
