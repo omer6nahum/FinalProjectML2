@@ -114,7 +114,9 @@ class LinReg:
 
 if __name__ == '__main__':
     # LinReg, First Approach:
-    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=1)
+    x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21,
+                                                                          approach=1,
+                                                                          prefix_path='../')
 
     # Fit and predict:
     lin_reg = LinReg()
