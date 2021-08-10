@@ -9,6 +9,7 @@ from Preprocess import create_train_test
 class LinReg:
     def __init__(self):
         self.beta = None
+        self.is_fitted = False
 
     def fit(self, X, y):
         """
@@ -29,6 +30,7 @@ class LinReg:
             tmp = pinv2(tmp)
         tmp = np.matmul(tmp, X.T)
         self.beta = np.matmul(tmp, y)
+        self.is_fitted = True
         return self.beta
 
     def predict(self, X_new):
@@ -47,6 +49,7 @@ class LinReg:
     def load_params(self, path):
         with open(path, 'rb') as f:
             self.beta = pickle.load(f)
+        self.is_fitted = True
 
 
 if __name__ == '__main__':
