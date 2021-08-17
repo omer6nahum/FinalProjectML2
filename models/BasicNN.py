@@ -9,6 +9,7 @@ import torch.optim as optim
 from torch.utils.data.dataset import Dataset, TensorDataset
 from torch.utils.data import DataLoader
 from main import LABELS, LABELS_REV
+import time
 
 
 class MatchesDataset(Dataset):
@@ -42,8 +43,9 @@ class MatchesDataset(Dataset):
 
 
 class InnerBasicNN(nn.Module):
-    def __init__(self, input_shape, num_labels=3):
+    def __init__(self, input_shape, device, num_labels=3):
         super().__init__()
+        self.device = device
         self.num_units = input_shape // 2
         self.num_labels = num_labels
         self.sequential = nn.Sequential(
@@ -52,19 +54,25 @@ class InnerBasicNN(nn.Module):
             nn.Linear(self.num_units, self.num_units),
             nn.Sigmoid(),
             nn.Linear(self.num_units, num_labels)
-        )
-        self.loss_function = nn.CrossEntropyLoss()
+        ).to(self.device)
+        self.loss_function = nn.CrossEntropyLoss().to(self.device)
 
     def forward(self, x):
+        x = x.to(self.device)
         return self.sequential(x)
 
 
 class BasicNN:
     def __init__(self, input_shape, num_epochs=100, batch_size=32, lr=1e-2, optimizer=None):
-        self.model = InnerBasicNN(input_shape, num_labels=3)
+        use_cuda = torch.cuda.is_available()
+        self.device = torch.device("cuda:0" if use_cuda else "cpu")
+        print(f'using {self.device}')
+        if use_cuda:
+            torch.cuda.empty_cache()
+        self.model = InnerBasicNN(input_shape, self.device, num_labels=3).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr) if optimizer is None else optimizer
-        self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
+        # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
         self.labels = {'H': 0, 'D': 1, 'A': 2}
         self.is_fitted = False
         self.num_epochs = num_epochs
@@ -86,18 +94,21 @@ class BasicNN:
         n = len(trainloader)
         self.model.train()
         for epoch in range(self.num_epochs):  # loop over the dataset multiple times
+            t_start = time.time()
             running_loss = 0.0
             for data in trainloader:
                 inputs, labels = data
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
                 self.optimizer.zero_grad()
-                outputs = self.model(inputs)
-                loss = self.model.loss_function(outputs, labels)
+                outputs = self.model(inputs).to(self.device)
+                loss = self.model.loss_function(outputs, labels).to(self.device)
                 loss.backward()
                 self.optimizer.step()
                 running_loss += loss.item()
 
             # print loss per epoch
-            print(f' Epoch {epoch + 1}: Loss={running_loss / n}')
+            print(f'Finished epoch {epoch + 1} in {(time.time() - t_start):.3f} sec : Loss={(running_loss / n):.3f}')
 
         self.is_fitted = True
 
@@ -116,8 +127,8 @@ class BasicNN:
 
         with torch.no_grad():
             for inputs in testloader:
-                inputs = inputs[0]
-                proba_output = F.softmax(self.model(inputs), dim=1)
+                inputs = inputs[0].to(self.device)
+                proba_output = F.softmax(self.model(inputs), dim=1).to('cpu')
                 proba_outputs.append(proba_output)
         return np.array(torch.cat(proba_outputs, dim=0))
 
@@ -142,19 +153,6 @@ class BasicNN:
 if __name__ == '__main__':
     # BasicNN, Second Approach:
     x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21, approach=2, prefix_path='../')
-    # y_train = np.array([LABELS[y_i] for y_i in y_train])
-    # dataset = MatchesDataset(x_train, y_train)
-    # trainloader = DataLoader(dataset, batch_size=2, shuffle=True)
-    # dataset = MatchesDataset(x_test)
-    # testloader = DataLoader(dataset, batch_size=2, shuffle=False)
-    #
-    # for i, inputs in enumerate(testloader):
-    #     print(inputs[0])
-    #     if i == 5:
-    #         break
-    # for inputs, labels in trainloader:
-    #     print(inputs.shape)
-    #     break
 
     model = BasicNN(input_shape=x_train.shape[1], num_epochs=0, lr=1e-3)
     model.fit(x_train, y_train)
