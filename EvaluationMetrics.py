@@ -6,7 +6,6 @@ from models.LinReg import LinReg
 from FirstApproach import FirstApproach
 from SecondApproach import SecondApproach
 
-# TODO: implement evaluation ranking metrics
 TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 
 def diff_in_val(table1, table2, team, param):
@@ -17,7 +16,6 @@ def mul_in_val(table1, table2, team, param, mean_normalization=0):
            (table2[table2[TEAM_NAME] == team][param].iloc[0] - mean_normalization)
 
 def add_adjusted_ranks(table1, table2, return_rank=False):
-    # TODO: add documentation.
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     table1_adj = table1.copy()
     table2_adj = table2.copy()
@@ -35,7 +33,6 @@ def add_adjusted_ranks(table1, table2, return_rank=False):
 
 
 def add_regular_ranks(table1, table2):
-    # TODO: add documentation.
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     table1_adj = table1.copy()
     table2_adj = table2.copy()
@@ -45,7 +42,6 @@ def add_regular_ranks(table1, table2):
 
 
 def weighted_hamming(predicted_table, ground_truth):
-    # TODO: add documentation.
     assert set(predicted_table[TEAM_NAME]) == set(ground_truth[TEAM_NAME])
     teams = set(predicted_table[TEAM_NAME])
     dist = 0
@@ -59,7 +55,6 @@ def weighted_hamming(predicted_table, ground_truth):
 
 
 def hamming(table1, table2):
-    # TODO: add documentation.
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     teams = set(table1[TEAM_NAME])
     dist = 0
@@ -68,7 +63,6 @@ def hamming(table1, table2):
     return dist
 
 def hamming_normalized(table1, table2):
-    # TODO: add documentation.
     return (10*20-hamming(table1, table2)) / (10*20)
 
 def adj_hamming(table1, table2, return_rank=False):
@@ -81,7 +75,6 @@ def adj_hamming(table1, table2, return_rank=False):
     return dist
 
 def adj_hamming_normalized(table1, table2):
-    # TODO: add documentation.
     hamming, rank = adj_hamming(table1, table2, return_rank=True)
     return (sum(rank)-hamming) / sum(rank)
 
