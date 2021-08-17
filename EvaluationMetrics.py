@@ -12,8 +12,9 @@ TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 def diff_in_val(table1, table2, team, param):
     return table1[table1[TEAM_NAME] == team][param].iloc[0] - table2[table2[TEAM_NAME] == team][param].iloc[0]
 
-def mul_in_val(table1, table2, team, param):
-    return table1[table1[TEAM_NAME] == team][param].iloc[0] * table2[table2[TEAM_NAME] == team][param].iloc[0]
+def mul_in_val(table1, table2, team, param, mean_normalization=0):
+    return (table1[table1[TEAM_NAME] == team][param].iloc[0] - mean_normalization) *\
+           (table2[table2[TEAM_NAME] == team][param].iloc[0] - mean_normalization)
 
 def add_adjusted_ranks(table1, table2, return_rank=False):
     # TODO: add documentation.
@@ -25,7 +26,7 @@ def add_adjusted_ranks(table1, table2, return_rank=False):
                 [3, 3.25, 3.5] + \
                 list(np.arange(4, 5.555, 1/6)) + \
                 [6, 6.25, 6.5]
-    adj_ranks = [(x-1)/5.5*19+1 for x in adj_ranks]
+    adj_ranks = [(x-1)/(6.5-1)*19+1 for x in adj_ranks]
     table1_adj[ADJ_RANK] = adj_ranks
     table2_adj[ADJ_RANK] = adj_ranks
     if return_rank:
@@ -106,12 +107,11 @@ def spearman(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
     sum_Di = 0
+    mean_rank = sum(rank)/len(rank)
     for team in set(table1[TEAM_NAME]):
-        sum_Di += mul_in_val(adj_table1, adj_table2, team, ADJ_RANK)
-    squre_rank = sum([x**2 for x in rank])
+        sum_Di += mul_in_val(adj_table1, adj_table2, team, ADJ_RANK, mean_normalization=mean_rank)
+    squre_rank = sum([(x-mean_rank)**2 for x in rank])
     return sum_Di/squre_rank
-
-
 
 def points_error(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
