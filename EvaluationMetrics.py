@@ -9,6 +9,8 @@ from SecondApproach import SecondApproach
 # TODO: implement evaluation ranking metrics
 TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 
+def diff_in_val(table1, table2, team, param):
+    return table1[table1[TEAM_NAME] == team][param].iloc[0] - table2[table2[TEAM_NAME] == team][param].iloc[0]
 
 def add_adjusted_ranks(table1, table2):
     # TODO: add documentation.
@@ -58,6 +60,65 @@ def hamming(table1, table2):
         dist += abs(pd.Index(table1[TEAM_NAME]).get_loc(team) - pd.Index(table2[TEAM_NAME]).get_loc(team))
     return dist
 
+def hamming_normalized(table1, table2):
+    # TODO: add documentation.
+    return (10*20-hamming(table1, table2)) / (10*20)
+
+def adj_hamming(table1, table2):
+    adj_table1, adj_table2 = add_adjusted_ranks(table1, table2)
+    dist = 0
+    for team in set(table1[TEAM_NAME]):
+        dist += np.abs(diff_in_val(adj_table1, adj_table2, team, ADJ_RANK))
+    return dist
+
+def adj_hamming_normalized(table1, table2):
+    # TODO: add documentation.
+    return (40.5-adj_hamming(table1, table2)) / 40.5
+
+
+def adj_MAP(table, ground_truth_table):
+    assert set(table[TEAM_NAME]) == set(ground_truth_table[TEAM_NAME])
+    map = 0
+    for i in range(1,len(table[TEAM_NAME])+1):
+        p_at_i = len(set(table[TEAM_NAME][:i]).intersection(ground_truth_table[TEAM_NAME][:i]))/i
+        map += p_at_i/20
+    return map
+
+def adj_MAP_normalized(table, ground_truth_table):
+    assert set(table[TEAM_NAME]) == set(ground_truth_table[TEAM_NAME])
+    map_norm = 0
+    for i in range(1,20):
+        min_at_i = max(0,i-10)*2
+        p_at_i = (len(set(table[TEAM_NAME][:i]).intersection(ground_truth_table[TEAM_NAME][:i]))-min_at_i)/(i-min_at_i)
+        map_norm += p_at_i/19
+    return map_norm
+
+def spearman(table1, table2):
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    adj_table1, adj_table2 = add_adjusted_ranks(table1, table2)
+    sum_Di = 0
+    N = max(set(adj_table1[ADJ_RANK]))
+    for team in set(table1[TEAM_NAME]):
+        Di = diff_in_val(adj_table1, adj_table2, team, ADJ_RANK) ** 2
+        sum_Di += Di
+    return 1-((6*sum_Di)/(N*(N**2-1)))
+
+
+
+def points_error(table1, table2):
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    error = 0
+    for team in set(table1[TEAM_NAME]):
+         error += np.abs(diff_in_val(table1, table2, team, PTS))
+    return error
+
+def points_regression(table1, table2):
+    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
+    SR = 0
+    for team in set(table1[TEAM_NAME]):
+         SR += diff_in_val(table1, table2, team, PTS) ** 2
+    return np.sqrt(SR)
+
 
 if __name__ == '__main__':
     gd_table = pd.read_csv('data/tables/table_21.csv')[['team_name', 'PTS']]
@@ -85,9 +146,26 @@ if __name__ == '__main__':
     print()
 
     # Test hamming eval functions:
-    print(f'hamming(ground truth vs. lin_reg): {hamming(tbl1, gd_table)}')
-    print(f'hamming(ground truth vs. log_reg): {hamming(tbl2, gd_table)}')
-    print(f'weighted_hamming(ground truth vs. lin_reg): {weighted_hamming(tbl1, gd_table)}')
-    print(f'weighted_hamming(ground truth vs. log_reg): {weighted_hamming(tbl2, gd_table)}')
+    all_metrics = [hamming,
+                   hamming_normalized,
+                   adj_hamming,
+                   adj_hamming_normalized,
+                   weighted_hamming,
+                   adj_MAP,
+                   adj_MAP_normalized,
+                   spearman,
+                   #points_regression,
+                   points_error,
+                   ]
+    all_tables = {"lin_reg": tbl1, "log_reg": tbl2, "gt": gd_table}
+    metrics = pd.DataFrame({m.__name__: [m(t, gd_table) for t in all_tables.values()] for m in all_metrics},
+                           index=all_tables.keys())
+    print(metrics.T)
+    # print(f'hamming(ground truth vs. lin_reg): {hamming(tbl1, gd_table)}')
+    # print(f'hamming(ground truth vs. log_reg): {hamming(tbl2, gd_table)}')
+    # print(f'hamming_normalized(ground truth vs. lin_reg): {hamming_normalized(tbl1, gd_table)}')
+    # print(f'hamming_normalized(ground truth vs. log_reg): {hamming_normalized(tbl2, gd_table)}')
+    # print(f'weighted_hamming(ground truth vs. lin_reg): {weighted_hamming(tbl1, gd_table)}')
+    # print(f'weighted_hamming(ground truth vs. log_reg): {weighted_hamming(tbl2, gd_table)}')
 
 
