@@ -12,7 +12,10 @@ TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 def diff_in_val(table1, table2, team, param):
     return table1[table1[TEAM_NAME] == team][param].iloc[0] - table2[table2[TEAM_NAME] == team][param].iloc[0]
 
-def add_adjusted_ranks(table1, table2):
+def mul_in_val(table1, table2, team, param):
+    return table1[table1[TEAM_NAME] == team][param].iloc[0] * table2[table2[TEAM_NAME] == team][param].iloc[0]
+
+def add_adjusted_ranks(table1, table2, return_rank=False):
     # TODO: add documentation.
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     table1_adj = table1.copy()
@@ -22,8 +25,11 @@ def add_adjusted_ranks(table1, table2):
                 [3, 3.25, 3.5] + \
                 list(np.arange(4, 5.555, 1/6)) + \
                 [6, 6.25, 6.5]
+    adj_ranks = [(x-1)/5.5*19+1 for x in adj_ranks]
     table1_adj[ADJ_RANK] = adj_ranks
     table2_adj[ADJ_RANK] = adj_ranks
+    if return_rank:
+        return table1_adj, table2_adj, adj_ranks
     return table1_adj, table2_adj
 
 
@@ -64,16 +70,19 @@ def hamming_normalized(table1, table2):
     # TODO: add documentation.
     return (10*20-hamming(table1, table2)) / (10*20)
 
-def adj_hamming(table1, table2):
-    adj_table1, adj_table2 = add_adjusted_ranks(table1, table2)
+def adj_hamming(table1, table2, return_rank=False):
+    adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
     dist = 0
     for team in set(table1[TEAM_NAME]):
         dist += np.abs(diff_in_val(adj_table1, adj_table2, team, ADJ_RANK))
+    if return_rank:
+        return dist, rank
     return dist
 
 def adj_hamming_normalized(table1, table2):
     # TODO: add documentation.
-    return (40.5-adj_hamming(table1, table2)) / 40.5
+    hamming, rank = adj_hamming(table1, table2, return_rank=True)
+    return (sum(rank)-hamming) / sum(rank)
 
 
 def adj_MAP(table, ground_truth_table):
@@ -95,13 +104,12 @@ def adj_MAP_normalized(table, ground_truth_table):
 
 def spearman(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
-    adj_table1, adj_table2 = add_adjusted_ranks(table1, table2)
+    adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
     sum_Di = 0
-    N = max(set(adj_table1[ADJ_RANK]))
     for team in set(table1[TEAM_NAME]):
-        Di = diff_in_val(adj_table1, adj_table2, team, ADJ_RANK) ** 2
-        sum_Di += Di
-    return 1-((6*sum_Di)/(N*(N**2-1)))
+        sum_Di += mul_in_val(adj_table1, adj_table2, team, ADJ_RANK)
+    squre_rank = sum([x**2 for x in rank])
+    return sum_Di/squre_rank
 
 
 
