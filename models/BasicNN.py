@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data.dataset import Dataset, TensorDataset
 from torch.utils.data import DataLoader
-from main import LABELS, LABELS_REV
+from deps import LABELS, LABELS_REV
 import time
 
 
@@ -43,10 +43,10 @@ class MatchesDataset(Dataset):
 
 
 class InnerBasicNN(nn.Module):
-    def __init__(self, input_shape, device, num_labels=3):
+    def __init__(self, input_shape, device, num_labels=3, num_units=None):
         super().__init__()
         self.device = device
-        self.num_units = input_shape // 2
+        self.num_units = input_shape // 2 if num_units is None else num_units
         self.num_labels = num_labels
         self.sequential = nn.Sequential(
             nn.Linear(input_shape, self.num_units),
@@ -63,13 +63,13 @@ class InnerBasicNN(nn.Module):
 
 
 class BasicNN:
-    def __init__(self, input_shape, num_epochs=100, batch_size=32, lr=1e-2, optimizer=None):
+    def __init__(self, input_shape, num_epochs=100, batch_size=32, lr=1e-2, optimizer=None, num_units=None):
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if use_cuda else "cpu")
         print(f'using {self.device}')
         if use_cuda:
             torch.cuda.empty_cache()
-        self.model = InnerBasicNN(input_shape, self.device, num_labels=3).to(self.device)
+        self.model = InnerBasicNN(input_shape, self.device, num_labels=3, num_units=num_units).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr) if optimizer is None else optimizer
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)

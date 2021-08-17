@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 from sklearn.linear_model import LogisticRegression
 from Preprocess import load_train_test
-from main import LABELS, LABELS_REV
+from deps import LABELS, LABELS_REV
 
 class LogReg:
     def __init__(self):
@@ -24,7 +24,7 @@ class LogReg:
         assert X.shape[0] == y.shape[0]
 
         y = np.array([self.labels[y_i] for y_i in y])
-        logreg_model = LogisticRegression(multi_class='multinomial', max_iter=1000, solver='lbfgs')
+        logreg_model = LogisticRegression(multi_class='multinomial', max_iter=100, solver='lbfgs')
         logreg_model.fit(X, y)
 
         beta = logreg_model.coef_

@@ -84,22 +84,65 @@ def create_x_y_z_approach2(year, prefix_path=''):
     return np.vstack(x), np.squeeze(np.vstack(y)), np.vstack(z)
 
 
-def create_x_y_z(year, approach, prefix_path=''):
+def create_sequence_matrix(row, home):
+    if home:
+        team = 'HomeTeam'
+    else:
+        team = 'AwayTeam'
+    columns = [f'{team}_p{i}{result}' for i in range(5, 0, -1) for result in ['Win', 'Draw', 'Lose']]
+
+    return row[columns].values.astype(np.float).reshape((5, 3))
+
+
+def create_x_y_z_approach2_advanced(year, prefix_path=''):
+    all_matches_path = prefix_path + f'data/matches/adv_matches_{year}.csv'
+    all_matches = pd.read_csv(all_matches_path)
+
+    x = []  # x_i is a *list*:
+            # x_i[0] is 2-squads representation
+            # x_i[1] is a (5, 3) shaped array of 5 last matches of home team
+            # x_i[2] is a (5, 3) shaped array of 5 last matches of away team
+    y = []  # y_i is label from {'H', 'D', 'A'}
+    z = []  # z_i is 2d vector: [home_team_name, away_team_name]
+
+    path = prefix_path + f'data/players/players_{year}.csv'
+    data = pd.read_csv(path)
+
+    for i, row in all_matches.iterrows():
+        home_squad = create_squad(data[data['club_name'] == row['HomeTeam']], prefix_path=prefix_path)
+        away_squad = create_squad(data[data['club_name'] == row['AwayTeam']], prefix_path=prefix_path)
+        squads = np.concatenate((home_squad, away_squad))
+        home_sequence = create_sequence_matrix(row, home=True)
+        away_sequence = create_sequence_matrix(row, home=False)
+        x.append([])
+        x[-1].append(squads)  # x_i[0]
+        x[-1].append(home_sequence)  # x_i[0]
+        x[-1].append(away_sequence)  # x_i[0]
+        y.append(row['FTR'])
+        z.append(np.array([row['HomeTeam'], row['AwayTeam']]))
+
+    return x, np.squeeze(np.vstack(y)), np.vstack(z)
+
+
+def create_x_y_z(year, approach, part='basic', prefix_path=''):
     """
     :param year: 2 digits
     :param approach: can be one of {1, 2}
+    :param part: can be one of {'basic', 'advanced'}
     :return:
     """
-
-    if approach == 1:
-        return create_x_y_z_approach1(year, prefix_path)
-    elif approach == 2:
-        return create_x_y_z_approach2(year, prefix_path)
+    if part == 'basic':
+        if approach == 1:
+            return create_x_y_z_approach1(year, prefix_path)
+        elif approach == 2:
+            return create_x_y_z_approach2(year, prefix_path)
+    elif part == 'advanced':
+        return create_x_y_z_approach2_advanced(year, prefix_path)
     else:
         raise ValueError('Not an approach')
 
 
-def load_train_test(test_year, approach, prefix_path='', dir_path=None):
+def load_train_test(test_year, approach, part='basic', prefix_path='', dir_path=None):
     if dir_path is None:
         dir_path = 'pickles/data/'
 
@@ -111,7 +154,7 @@ def load_train_test(test_year, approach, prefix_path='', dir_path=None):
     z_train = []
     z_test = []
     for year in years:
-        x, y, z = load_x_y_z_pickle(year, approach, prefix_path + dir_path)
+        x, y, z = load_x_y_z_pickle(year, approach, part, prefix_path + dir_path)
         if year == test_year:
             x_test.append(x)
             y_test.append(y)
@@ -120,29 +163,39 @@ def load_train_test(test_year, approach, prefix_path='', dir_path=None):
             x_train.append(x)
             y_train.append(y)
             z_train.append(z)
-    x_train = np.vstack(x_train)
+    if part == 'basic':
+        x_train = np.vstack(x_train)
+        x_test = np.vstack(x_test)
+    else:
+        x_train_res = []
+        for item in x_train:
+            x_train_res += item
+        x_train = x_train_res
+        x_test_res = []
+        for item in x_test:
+            x_test_res += item
+        x_test = x_test_res
     y_train = np.hstack(y_train)
     z_train = np.vstack(z_train)
-    x_test = np.vstack(x_test)
     y_test = np.hstack(y_test)
     z_test = np.vstack(z_test)
 
     return x_train, x_test, y_train, y_test, z_train, z_test
 
 
-def dump_x_y_z_pickle(year, approach, dir_path=None):
+def dump_x_y_z_pickle(year, approach, part='basic', dir_path=None):
     if dir_path is None:
         dir_path = 'pickles/data/'
-    path = dir_path + f'year_{year}_approach_{approach}.pkl'
-    data = create_x_y_z(year, approach)
+    path = dir_path + f'year_{year}_approach_{approach}_{part}.pkl'
+    data = create_x_y_z(year, approach, part)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
 
-def load_x_y_z_pickle(year, approach, dir_path=None):
+def load_x_y_z_pickle(year, approach, part='basic', dir_path=None):
     if dir_path is None:
         dir_path = 'pickles/data/'
-    path = dir_path + f'year_{year}_approach_{approach}.pkl'
+    path = dir_path + f'year_{year}_approach_{approach}_{part}.pkl'
     with open(path, 'rb') as f:
         data = pickle.load(f)
     # data = x_train, x_test, y_train, y_test, z_train, z_test
@@ -154,9 +207,11 @@ if __name__ == '__main__':
     # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
     # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2)
     # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
+    # x, y, z = create_x_y_z(15, 2, part='advanced', prefix_path='')
 
     for year in range(15, 22):
         for approach in [2, 1]:
-            dump_x_y_z_pickle(year, approach)
+            dump_x_y_z_pickle(year, approach, part='basic')
+        dump_x_y_z_pickle(year, approach=2, part='advanced')
 
 

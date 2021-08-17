@@ -3,7 +3,7 @@ from models.LogReg import LogReg
 from Preprocess import load_train_test
 from random import random
 from models.BasicNN import BasicNN
-from main import LABELS, LABELS_REV
+from deps import LABELS, LABELS_REV
 import numpy as np
 
 model_options = [LogReg, BasicNN]
@@ -53,6 +53,25 @@ class SecondApproach:
 
         return num_true / num_total
 
+    def adjusted_accuracy(self, X_test, y_test):
+        assert X_test.shape[0] == y_test.shape[0]
+        y_pred = self.model.predict(X_test)
+        y_pred = np.array([LABELS_REV[np.argmax(y_pred[i])] for i in range(y_pred.shape[0])])
+        num_true = 0
+        num_total = 0
+        num_draws = 0
+
+        for i in range(y_pred.shape[0]):
+            num_total += 1
+            if y_test[i] == y_pred[i]:
+                num_true += 1
+            elif y_test[i] == 'D' or y_pred[i] == 'D':
+                num_true += 0.5
+            num_draws += 1 if y_test[i] == 'D' else 0
+
+        adj_acc = (num_true - num_draws * 0.5) / (num_total - num_draws * 0.5)
+        return adj_acc
+
     @staticmethod
     def expectation(teams, probs, z_test):
         """
@@ -101,7 +120,7 @@ if __name__ == '__main__':
                                                                           prefix_path='')
 
     # model = LogReg()
-    model = BasicNN(input_shape=x_train.shape[1], num_epochs=0, lr=1e-3)
+    model = BasicNN(input_shape=x_train.shape[1], num_epochs=2, lr=1e-3)
     model.fit(x_train, y_train)
     second_approach = SecondApproach(model)
     pred_table_expectation = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
