@@ -9,10 +9,6 @@ from torch.utils.data import DataLoader
 from deps import LABELS, LABELS_REV
 import time
 
-# todo: validate AdvancedNN fit function,
-#       rewrite predict function,
-#       rewrite InnerAdvancedNN
-
 
 class MatchesSequencesDataset(Dataset):
     def __init__(self, matches, labels=None):
@@ -38,12 +34,26 @@ class MatchesSequencesDataset(Dataset):
         home_sequence_len_list = list()
         away_sequence_list = list()
         away_sequence_len_list = list()
+
+        default_empty_sequence = np.zeros((5, 3))
+        default_empty_sequence[0:4, :] = np.nan
         for match in matches:
             squads_list.append(torch.tensor(match[0], dtype=torch.float, requires_grad=False))
-            home_sequence_list.append(torch.tensor(match[1], dtype=torch.float, requires_grad=False))
-            home_sequence_len_list.append(self.sequence_len(match[1]))
-            away_sequence_list.append(torch.tensor(match[2], dtype=torch.float, requires_grad=False))
-            away_sequence_len_list.append(self.sequence_len(match[2]))
+            home_len = self.sequence_len(match[1])
+            if home_len > 0:
+                home_sequence_len_list.append(home_len)
+                home_sequence_list.append(torch.tensor(match[1], dtype=torch.float, requires_grad=False))
+            else:
+                home_sequence_len_list.append(1)
+                home_sequence_list.append(torch.tensor(default_empty_sequence, dtype=torch.float, requires_grad=False))
+
+            away_len = self.sequence_len(match[2])
+            if home_len > 0:
+                away_sequence_len_list.append(away_len)
+                away_sequence_list.append(torch.tensor(match[2], dtype=torch.float, requires_grad=False))
+            else:
+                away_sequence_len_list.append(1)
+                away_sequence_list.append(torch.tensor(default_empty_sequence, dtype=torch.float, requires_grad=False))
 
         all_squads = torch.stack(squads_list)
         all_home_sequences = torch.stack(home_sequence_list)
@@ -68,14 +78,24 @@ class MatchesSequencesDataset(Dataset):
         return counter
 
 
-class InnerBasicNN(nn.Module):
-    def __init__(self, input_shape, device, num_labels=3, num_units=None):
+class InnerAdvancedNN(nn.Module):
+    def __init__(self, input_shape, device, num_labels=3, num_units=None,
+                 hidden_lstm_dim=20, hidden_first_fc_dim=None):
         super().__init__()
         self.device = device
+        self.hidden_lstm_dim = hidden_lstm_dim
+        self.hidden_first_fc_dim = hidden_first_fc_dim
         self.num_units = input_shape // 2 if num_units is None else num_units
+        self.hidden_lstm_dim = hidden_lstm_dim
+        self.hidden_first_fc_dim = input_shape // 2 if hidden_first_fc_dim is None else hidden_first_fc_dim
         self.num_labels = num_labels
+        self.firstFC = nn.Sequential(
+            nn.Linear(input_shape, self.hidden_first_fc_dim),
+            nn.Sigmoid()
+        )
+        self.lstm = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
         self.sequential = nn.Sequential(
-            nn.Linear(input_shape, self.num_units),
+            nn.Linear(self.hidden_first_fc_dim + 2 * self.hidden_lstm_dim, self.num_units),
             nn.Sigmoid(),
             nn.Linear(self.num_units, self.num_units),
             nn.Sigmoid(),
@@ -84,18 +104,27 @@ class InnerBasicNN(nn.Module):
         self.loss_function = nn.CrossEntropyLoss().to(self.device)
 
     def forward(self, x):
-        x = x.to(self.device)
+        squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len = x
+        home_sequence = home_sequence[:, -home_sequence_len:, :]
+        away_sequence = away_sequence[:, -away_sequence_len:, :]
+        squads_embedding = self.firstFC(squads)
+        _, (__, lstm_home) = self.lstm(home_sequence)
+        _, (__, lstm_away) = self.lstm(away_sequence)
+        x = torch.cat([squads_embedding.squeeze(), lstm_home.squeeze(), lstm_away.squeeze()]).unsqueeze(0)
         return self.sequential(x)
 
 
 class AdvancedNN:
-    def __init__(self, input_shape, num_epochs=100, batch_size=32, lr=1e-2, optimizer=None, num_units=None):
+    def __init__(self, input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=None, num_epochs=100,
+                 batch_size=32, lr=1e-2, optimizer=None, num_units=None):
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if use_cuda else "cpu")
         print(f'using {self.device}')
         if use_cuda:
             torch.cuda.empty_cache()
-        self.model = InnerAdvancedNN(input_shape, self.device, num_labels=3, num_units=num_units).to(self.device)
+        self.model = InnerAdvancedNN(input_shape=input_shape, device=self.device, num_labels=3,
+                                     num_units=num_units, hidden_lstm_dim=hidden_lstm_dim,
+                                     hidden_first_fc_dim=hidden_first_fc_dim).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr) if optimizer is None else optimizer
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
@@ -106,13 +135,14 @@ class AdvancedNN:
     def fit(self, X, y):
         """
         Fit the neural network model by running the training loop process.
-        :param X: explaining variables matrix (without ones column).
+        :param X: explaining variables tensor containing:
+                  squads representation, home team sequence, away team sequence
         :param y: explained variable vector (categorical label).
         :return: -.
         """
-        assert isinstance(X, np.ndarray)
+        assert isinstance(X, list)
         assert isinstance(y, np.ndarray)
-        assert X.shape[0] == y.shape[0]
+        assert len(X) == y.shape[0]
         y = np.array([self.labels[y_i] for y_i in y])
 
         dataset = MatchesSequencesDataset(X, y)
@@ -127,13 +157,13 @@ class AdvancedNN:
             for data in trainloader:
                 i += 1
                 squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len, labels = data
+                squads = squads.to(self.device)
                 home_sequence = home_sequence.to(self.device)
                 home_sequence_len = home_sequence_len.to(self.device)
                 away_sequence = away_sequence.to(self.device)
                 away_sequence_len = away_sequence_len.to(self.device)
                 labels = labels.to(self.device)
-
-                outputs = self.model(squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len)\
+                outputs = self.model((squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len))\
                     .to(self.device)
                 loss = self.model.loss_function(outputs, labels).to(self.device)
                 loss = loss / self.batch_size
@@ -143,7 +173,7 @@ class AdvancedNN:
                     self.optimizer.zero_grad()
                 running_loss += loss.item()
 
-            running_loss = self.batch_size * (running_loss / len(trainloader))
+            running_loss = self.batch_size * running_loss
             # print loss per epoch
             print(f'Finished epoch {epoch + 1} in {(time.time() - t_start):.3f} sec : Loss={(running_loss / n):.3f}')
 
@@ -152,20 +182,25 @@ class AdvancedNN:
     def predict(self, X_new):
         """
         Predict probability distribution for the explained variable classes for new observations.
-        :param X_new: explaining variables matrix (without ones column).
+        :param X_new: explaining variables tensor containing:
+                      squads representation, home team sequence, away team sequence
         :return: predicted probability distribution over the explained variable labels (for each new point) as tensor.
         """
 
-        # correct = 0
-        # total = 0
         proba_outputs = []
-        dataset = MatchesDataset(X_new)
-        testloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
+        dataset = MatchesSequencesDataset(X_new)
+        testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
         with torch.no_grad():
             for inputs in testloader:
-                inputs = inputs[0].to(self.device)
-                proba_output = F.softmax(self.model(inputs), dim=1).to('cpu')
+                squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len, = inputs
+                squads = squads.to(self.device)
+                home_sequence = home_sequence.to(self.device)
+                home_sequence_len = home_sequence_len.to(self.device)
+                away_sequence = away_sequence.to(self.device)
+                away_sequence_len = away_sequence_len.to(self.device)
+                proba_output = F.softmax(self.model((squads, home_sequence, home_sequence_len,
+                                                    away_sequence, away_sequence_len)), dim=1).to('cpu')
                 proba_outputs.append(proba_output)
         return np.array(torch.cat(proba_outputs, dim=0))
 
@@ -193,12 +228,13 @@ if __name__ == '__main__':
     # y_train = np.array([LABELS[y_i] for y_i in y_train])
     # dataset = MatchesSequencesDataset(x_train, y_train)
     # trainloader = DataLoader(dataset, batch_size=1, shuffle=True)
-    print()
-
-    model = AdvancedNN(input_shape=x_train.shape[1], num_epochs=0, lr=1e-3)
-    # model.fit(x_train, y_train)
-    # y_proba_pred = model.predict(x_test)
-    # print(y_proba_pred)
+    # print()
+    input_shape = x_train[0][0].shape[0]  # squad dim
+    model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=100, num_epochs=3,
+                       batch_size=32, lr=1e-3, optimizer=None, num_units=None)
+    model.fit(x_train, y_train)
+    y_proba_pred = model.predict(x_test)
+    print(y_proba_pred)
 
 
 
