@@ -63,7 +63,7 @@ class InnerBasicNN(nn.Module):
 
 
 class BasicNN:
-    def __init__(self, input_shape, num_epochs=100, batch_size=32, lr=1e-2, optimizer=None, num_units=None):
+    def __init__(self, input_shape, num_epochs=50, batch_size=32, lr=1e-3, optimizer=None, num_units=None):
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if use_cuda else "cpu")
         print(f'using {self.device}')
@@ -138,7 +138,7 @@ class BasicNN:
         :param path: path for the params file.
         :return: None
         """
-        torch.save(model, path)
+        torch.save(self.model, path)
 
     def load_params(self, path):
         """

@@ -73,8 +73,11 @@ if __name__ == '__main__':
     # -- Second approach
     input_shape = load_x_y_z_pickle(15, 2)[0].shape[1]
     log_reg = LogReg()
-    basic_nn = BasicNN(input_shape=input_shape, num_epochs=10, lr=1e-3)
-    second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn)]
+    basic_nn1 = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=50, batch_size=128, num_units=4150)
+    basic_nn2 = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=50, batch_size=64, num_units=4150)
+    basic_nn3 = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=50, batch_size=32, num_units=1037)
+
+    second_app_models = [('LogReg', log_reg), ('BasicNN1', basic_nn1), ('BasicNN2', basic_nn2), ('BasicNN3', basic_nn3)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)
