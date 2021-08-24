@@ -48,7 +48,7 @@ class MatchesSequencesDataset(Dataset):
                 home_sequence_list.append(torch.tensor(default_empty_sequence, dtype=torch.float, requires_grad=False))
 
             away_len = self.sequence_len(match[2])
-            if home_len > 0:
+            if away_len > 0:
                 away_sequence_len_list.append(away_len)
                 away_sequence_list.append(torch.tensor(match[2], dtype=torch.float, requires_grad=False))
             else:
@@ -83,17 +83,20 @@ class InnerAdvancedNN(nn.Module):
                  hidden_lstm_dim=20, hidden_first_fc_dim=None):
         super().__init__()
         self.device = device
+        # dimensions
         self.hidden_lstm_dim = hidden_lstm_dim
         self.hidden_first_fc_dim = hidden_first_fc_dim
         self.num_units = input_shape // 2 if num_units is None else num_units
         self.hidden_lstm_dim = hidden_lstm_dim
         self.hidden_first_fc_dim = input_shape // 2 if hidden_first_fc_dim is None else hidden_first_fc_dim
+        # layers
         self.num_labels = num_labels
         self.firstFC = nn.Sequential(
             nn.Linear(input_shape, self.hidden_first_fc_dim),
             nn.Sigmoid()
         )
-        self.lstm = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
+        self.lstm_home = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
+        self.lstm_away = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
         self.sequential = nn.Sequential(
             nn.Linear(self.hidden_first_fc_dim + 2 * self.hidden_lstm_dim, self.num_units),
             nn.Sigmoid(),
@@ -108,10 +111,11 @@ class InnerAdvancedNN(nn.Module):
         home_sequence = home_sequence[:, -home_sequence_len:, :]
         away_sequence = away_sequence[:, -away_sequence_len:, :]
         squads_embedding = self.firstFC(squads)
-        _, (__, lstm_home) = self.lstm(home_sequence)
-        _, (__, lstm_away) = self.lstm(away_sequence)
+        _, (lstm_home, __) = self.lstm_home(home_sequence)
+        _, (lstm_away, __) = self.lstm_away(away_sequence)
         x = torch.cat([squads_embedding.squeeze(), lstm_home.squeeze(), lstm_away.squeeze()]).unsqueeze(0)
-        return self.sequential(x)
+        x = self.sequential(x)
+        return x
 
 
 class AdvancedNN:
@@ -210,7 +214,7 @@ class AdvancedNN:
         :param path: path for the params file.
         :return: None
         """
-        torch.save(model, path)
+        torch.save(self.model, path)
 
     def load_params(self, path):
         """
