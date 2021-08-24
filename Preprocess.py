@@ -85,6 +85,15 @@ def create_x_y_z_approach2(year, prefix_path=''):
 
 
 def create_sequence_matrix(row, home):
+    """
+    Transform the required team sequence from row into a matrix of shape (5, 3).
+    Each Row represents a match result (Win/Draw/Lose). Overall 5 last matches.
+    The oreder of the rows in this matrix is:
+    matrix[-1] is the last match, matrix[-2] is the second last match, and so on.
+    :param row: one row from csv, representing a single match
+    :param home: True if home_team is required, False if away_team is.
+    :return: The transformed matrix
+    """
     if home:
         team = 'HomeTeam'
     else:
@@ -97,6 +106,7 @@ def create_sequence_matrix(row, home):
 def create_x_y_z_approach2_advanced(year, prefix_path=''):
     all_matches_path = prefix_path + f'data/matches/adv_matches_{year}.csv'
     all_matches = pd.read_csv(all_matches_path)
+    all_matches = all_matches.sort_values(by='Date', ascending=True)
 
     x = []  # x_i is a *list*:
             # x_i[0] is 2-squads representation
