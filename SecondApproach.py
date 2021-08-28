@@ -1,5 +1,6 @@
 import pandas as pd
 from models.LogReg import LogReg
+from models.OrdLogReg import OrdLogReg
 from Preprocess import load_train_test
 from random import random
 from models.BasicNN import BasicNN
@@ -8,7 +9,7 @@ import numpy as np
 from collections import deque
 from models.AdvancedNN import AdvancedNN
 
-model_options = [LogReg, BasicNN, AdvancedNN]
+model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg]
 ranking_method_options = ['expectation', 'simulation', 'advanced_simulation']
 WIN_VEC = np.array([1, 0, 0])
 DRAW_VEC = np.array([0, 1, 0])

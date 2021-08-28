@@ -4,6 +4,7 @@ from models.LogReg import LogReg
 from models.LinReg import LinReg
 from models.BasicNN import BasicNN
 from models.AdvancedNN import AdvancedNN
+from models.OrdLogReg import OrdLogReg
 from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error
 from Preprocess import load_train_test, load_x_y_z_pickle
 import pandas as pd
@@ -18,7 +19,7 @@ def second_approach_cv(model, metrics, test_years):
     :param metrics:
     :return:
     """
-    assert type(model) in [LogReg, BasicNN]
+    assert type(model) in [LogReg, BasicNN, OrdLogReg]
     assert not model.is_fitted
 
     mid_res = {'expectation': [], 'simulation': []}
@@ -112,9 +113,11 @@ if __name__ == '__main__':
     # -- Second approach
     input_shape = load_x_y_z_pickle(15, 2)[0].shape[1]
     log_reg = LogReg()
+    ord_log_reg = OrdLogReg()
     # todo: num_epochs should be 50
     basic_nn = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=5, batch_size=128, num_units=4150)
-    second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn)]
+    second_app_models = [('LogReg', log_reg), ('OrdLogReg', ord_log_reg)]
+    # second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn), ('OrdLogReg', ord_log_reg)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)
@@ -124,13 +127,13 @@ if __name__ == '__main__':
             final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     # Advanced Part
-    advanced_nn = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=5,
-                             batch_size=128, lr=1e-3, optimizer=None, num_units=None)
-    advanced_model_result = second_approach_cv_advanced(advanced_nn, metrics, test_years)
-    row_model_name = 'AdvancedNN'
-    row_values = advanced_model_result
-    final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
+    # advanced_nn = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=5,
+    #                          batch_size=128, lr=1e-3, optimizer=None, num_units=None)
+    # advanced_model_result = second_approach_cv_advanced(advanced_nn, metrics, test_years)
+    # row_model_name = 'AdvancedNN'
+    # row_values = advanced_model_result
+    # final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     print(final_df)
-    with open('final_df_advanced.pkl', 'wb') as f:
-        pickle.dump(final_df, f)
+    # with open('final_df_advanced.pkl', 'wb') as f:
+    #     pickle.dump(final_df, f)
