@@ -5,6 +5,7 @@ from models.LinReg import LinReg
 from models.BasicNN import BasicNN
 from models.AdvancedNN import AdvancedNN
 from models.OrdLogReg import OrdLogReg
+from models.OrdBasicNN import OrdBasicNN
 from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error
 from Preprocess import load_train_test, load_x_y_z_pickle
 import pandas as pd
@@ -19,7 +20,7 @@ def second_approach_cv(model, metrics, test_years):
     :param metrics:
     :return:
     """
-    assert type(model) in [LogReg, BasicNN, OrdLogReg]
+    assert type(model) in [LogReg, BasicNN, OrdLogReg, OrdBasicNN]
     assert not model.is_fitted
 
     mid_res = {'expectation': [], 'simulation': []}
@@ -57,7 +58,7 @@ def second_approach_cv_advanced(model, metrics, test_years):
     """
     assert type(model) == AdvancedNN
     assert not model.is_fitted
-
+    np.random.seed(5)
     mid_res = []
     for test_year in test_years:
         mid_res.append([])
@@ -65,6 +66,11 @@ def second_approach_cv_advanced(model, metrics, test_years):
                                                                             approach=2,
                                                                             part='advanced',
                                                                             prefix_path='')
+        idxs = np.random.randint(0, y_train.shape[0], y_train.shape[0] // 5)
+        y_train = y_train[idxs]
+        z_train = z_train[idxs]
+        x_train = [x_train[i] for i in idxs]
+
         model.fit(x_train, y_train)
         second_app = SecondApproach(model)
 

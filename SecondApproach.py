@@ -8,8 +8,9 @@ from deps import LABELS, LABELS_REV
 import numpy as np
 from collections import deque
 from models.AdvancedNN import AdvancedNN
+from models.OrdBasicNN import OrdBasicNN
 
-model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg]
+model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg, OrdBasicNN]
 ranking_method_options = ['expectation', 'simulation', 'advanced_simulation']
 WIN_VEC = np.array([1, 0, 0])
 DRAW_VEC = np.array([0, 1, 0])

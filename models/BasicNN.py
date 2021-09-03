@@ -119,8 +119,6 @@ class BasicNN:
         :return: predicted probability distribution over the explained variable labels (for each new point) as tensor.
         """
 
-        # correct = 0
-        # total = 0
         proba_outputs = []
         dataset = MatchesDataset(X_new)
         testloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
