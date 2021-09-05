@@ -135,7 +135,7 @@ class SecondApproach:
         table = {k: v/num_simulations for k, v in table.items()}  # mean over all simulations
         return table
 
-    def advanced_simulation(self, teams, x_test, z_test, num_simulations=10, y_test=None):
+    def advanced_simulation(self, teams, x_test, z_test, num_simulations=100, y_test=None):
         """
         Dynamically simulate season matches, in the given order, based on self.model probabilities prediction,
         and calculate number of points.

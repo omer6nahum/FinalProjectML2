@@ -73,7 +73,7 @@ class BasicNN:
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr) if optimizer is None else optimizer
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
-        self.labels = {'H': 0, 'D': 1, 'A': 2}
+        self.labels = LABELS
         self.is_fitted = False
         self.num_epochs = num_epochs
 

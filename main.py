@@ -38,24 +38,17 @@ if __name__ == '__main__':
             final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     # Advanced Part
-    advanced_nn1 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape // 2,
+    advanced_nn = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape // 2,
                               num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape // 8)
-    advanced_nn2 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=50, hidden_first_fc_dim=input_shape // 2,
-                              num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape // 8)
-    advanced_nn3 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape // 2,
-                              num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape // 64)
-    second_app_advanced_models = [('AdvNN1', advanced_nn1), ('AdvNN2', advanced_nn2), ('AdvNN3', advanced_nn3)]
-
-    for model_name, model in second_app_advanced_models:
-        advanced_model_result = second_approach_cv_advanced(model, metrics, test_years)
-        # row_model_name = 'AdvancedNN'
-        row_model_name = model_name
-        row_values = advanced_model_result
-        final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
+    advanced_model_result = second_approach_cv_advanced(advanced_nn, metrics, test_years)
+    row_model_name = 'AdvancedNN'
+    row_values = advanced_model_result
+    final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     # Creative Part
     ord_log_reg = OrdLogReg()
-    second_app_models = [('OrdLogReg', ord_log_reg)]
+    ord_basic_nn = OrdBasicNN(input_shape=input_shape, lr=1e-3, num_epochs=50, batch_size=128, num_units=4150)
+    second_app_models = [('OrdLogReg', ord_log_reg), ('OrdBasicNN', ord_basic_nn)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)

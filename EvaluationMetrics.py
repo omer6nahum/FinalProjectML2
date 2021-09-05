@@ -8,12 +8,15 @@ from SecondApproach import SecondApproach
 
 TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 
+
 def diff_in_val(table1, table2, team, param):
     return table1[table1[TEAM_NAME] == team][param].iloc[0] - table2[table2[TEAM_NAME] == team][param].iloc[0]
+
 
 def mul_in_val(table1, table2, team, param, mean_normalization=0):
     return (table1[table1[TEAM_NAME] == team][param].iloc[0] - mean_normalization) *\
            (table2[table2[TEAM_NAME] == team][param].iloc[0] - mean_normalization)
+
 
 def add_adjusted_ranks(table1, table2, return_rank=False):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
@@ -62,8 +65,10 @@ def hamming(table1, table2):
         dist += abs(pd.Index(table1[TEAM_NAME]).get_loc(team) - pd.Index(table2[TEAM_NAME]).get_loc(team))
     return dist
 
+
 def hamming_normalized(table1, table2):
     return (10*20-hamming(table1, table2)) / (10*20)
+
 
 def adj_hamming(table1, table2, return_rank=False):
     adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
@@ -73,6 +78,7 @@ def adj_hamming(table1, table2, return_rank=False):
     if return_rank:
         return dist, rank
     return dist
+
 
 def adj_hamming_normalized(table1, table2):
     hamming, rank = adj_hamming(table1, table2, return_rank=True)
@@ -87,6 +93,7 @@ def adj_MAP(table, ground_truth_table):
         map += p_at_i/20
     return map
 
+
 def adj_MAP_normalized(table, ground_truth_table):
     assert set(table[TEAM_NAME]) == set(ground_truth_table[TEAM_NAME])
     map_norm = 0
@@ -95,6 +102,7 @@ def adj_MAP_normalized(table, ground_truth_table):
         p_at_i = (len(set(table[TEAM_NAME][:i]).intersection(ground_truth_table[TEAM_NAME][:i]))-min_at_i)/(i-min_at_i)
         map_norm += p_at_i/19
     return map_norm
+
 
 def spearman(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
@@ -106,12 +114,14 @@ def spearman(table1, table2):
     squre_rank = sum([(x-mean_rank)**2 for x in rank])
     return sum_Di/squre_rank
 
+
 def points_error(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     error = 0
     for team in set(table1[TEAM_NAME]):
          error += np.abs(diff_in_val(table1, table2, team, PTS))
-    return error
+    return error/20
+
 
 def points_regression(table1, table2):
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
