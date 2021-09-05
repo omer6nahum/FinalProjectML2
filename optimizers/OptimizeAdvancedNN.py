@@ -1,7 +1,7 @@
 from models.AdvancedNN import AdvancedNN
 from Preprocess import load_x_y_z_pickle
 from tqdm import tqdm
-from main import second_approach_cv_advanced
+from CrossValidation import second_approach_cv_advanced
 from itertools import product
 import pickle
 

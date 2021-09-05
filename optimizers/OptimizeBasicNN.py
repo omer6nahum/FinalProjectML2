@@ -2,7 +2,7 @@ from models.BasicNN import BasicNN
 from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error
 from Preprocess import load_x_y_z_pickle
 from tqdm import tqdm
-from main import second_approach_cv
+from CrossValidation import second_approach_cv
 from itertools import product
 import pickle
 

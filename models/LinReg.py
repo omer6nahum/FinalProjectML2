@@ -74,9 +74,8 @@ if __name__ == '__main__':
     y_pred = lin_reg.predict(x_test)
 
     # Create tables
-    # TODO(omermadmon): this should be a function of FirstApproach class):
     clubs_2021_pred = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
-    clubs_2021_true = sorted(zip(z_test, y_test), key=lambda x: x[1], reverse=True)  # TODO: load data of real table
+    clubs_2021_true = sorted(zip(z_test, y_test), key=lambda x: x[1], reverse=True)
     predicted_table = pd.DataFrame(data=clubs_2021_pred)
     true_table = pd.DataFrame(data=clubs_2021_true)
     print(predicted_table)
