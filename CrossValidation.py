@@ -31,7 +31,9 @@ def first_approach_cv(model, metrics, test_years):
             first_app_results[-1].append(metric(pred_table, true_table))
 
     mean_cv_values = np.array(first_app_results).mean(axis=0)
-    return {metric_name: val for val, (metric_name, _) in zip(mean_cv_values, metrics)}
+    std_cv_values = np.array(first_app_results).std(axis=0)
+    return {metric_name: f'{mean:.3f} +- {std:.3f}' for mean, std, (metric_name, _) in
+            zip(mean_cv_values, std_cv_values, metrics)}
 
 
 def second_approach_cv(model, metrics, test_years):
@@ -68,7 +70,9 @@ def second_approach_cv(model, metrics, test_years):
     metric_names = [metric_name for metric_name, _ in metrics] + ['accuracy', 'adj_accuracy']
     for ranking_method in mid_res.keys():
         mean_cv_values = np.array(mid_res[ranking_method]).mean(axis=0)
-        res[ranking_method] = {metric_name: val for val, metric_name in zip(mean_cv_values, metric_names)}
+        std_cv_values = np.array(mid_res[ranking_method]).std(axis=0)
+        res[ranking_method] = {metric_name: f'{mean:.3f} +- {std:.3f}' for mean, std, (metric_name, _) in
+                               zip(mean_cv_values, std_cv_values, metrics)}
     return res
 
 
@@ -89,7 +93,6 @@ def second_approach_cv_advanced(model, metrics, test_years):
                                                                             approach=2,
                                                                             part='advanced',
                                                                             prefix_path='')
-
         model.fit(x_train, y_train)
         second_app = SecondApproach(model)
 
@@ -102,5 +105,6 @@ def second_approach_cv_advanced(model, metrics, test_years):
 
     metric_names = [metric_name for metric_name, _ in metrics] + ['accuracy', 'adj_accuracy']
     mean_cv_values = np.array(mid_res).mean(axis=0)
-    res = {metric_name: val for val, metric_name in zip(mean_cv_values, metric_names)}
-    return res
+    std_cv_values = np.array(mid_res).std(axis=0)
+    return {metric_name: f'{mean:.3f} +- {std:.3f}' for mean, std, (metric_name, _) in
+            zip(mean_cv_values, std_cv_values, metrics)}
