@@ -251,17 +251,17 @@ class SecondApproach:
 if __name__ == '__main__':
     x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
                                                                         approach=2,
-                                                                        part='advanced',
+                                                                        part='basic',
                                                                         prefix_path='')
 
     # model = LogReg()
-    # model = BasicNN(input_shape=x_train.shape[1], num_epochs=2, lr=1e-3)
-    input_shape = x_train[0][0].shape[0]  # squad dim
-    model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=50,
-                       batch_size=128, lr=1e-3, optimizer=None, num_units=None)
+    model = BasicNN(input_shape=x_train.shape[1], lr=1e-3, num_epochs=50, batch_size=128, num_units=4150)
+    # input_shape = x_train[0][0].shape[0]  # squad dim
+    # model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=50,
+    #                    batch_size=128, lr=1e-3, optimizer=None, num_units=None)
     model.fit(x_train, y_train)
     second_approach = SecondApproach(model)
-    pred_table = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
+    pred_table, _ = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
     print(pred_table)
     # pred_table_expectation = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
     # print(pred_table_expectation)

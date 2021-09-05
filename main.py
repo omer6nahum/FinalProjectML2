@@ -66,10 +66,11 @@ def second_approach_cv_advanced(model, metrics, test_years):
                                                                             approach=2,
                                                                             part='advanced',
                                                                             prefix_path='')
-        idxs = np.random.randint(0, y_train.shape[0], y_train.shape[0] // 5)
-        y_train = y_train[idxs]
-        z_train = z_train[idxs]
-        x_train = [x_train[i] for i in idxs]
+        # # sample for fast run
+        # idxs = np.random.randint(0, y_train.shape[0], y_train.shape[0] // 5)
+        # y_train = y_train[idxs]
+        # z_train = z_train[idxs]
+        # x_train = [x_train[i] for i in idxs]
 
         model.fit(x_train, y_train)
         second_app = SecondApproach(model)
@@ -120,10 +121,9 @@ if __name__ == '__main__':
     input_shape = load_x_y_z_pickle(15, 2)[0].shape[1]
     log_reg = LogReg()
     ord_log_reg = OrdLogReg()
-    # todo: num_epochs should be 50
-    basic_nn = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=5, batch_size=128, num_units=4150)
-    second_app_models = [('LogReg', log_reg), ('OrdLogReg', ord_log_reg)]
-    # second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn), ('OrdLogReg', ord_log_reg)]
+    basic_nn = BasicNN(input_shape=input_shape, lr=1e-3, num_epochs=50, batch_size=128, num_units=4150)
+    # second_app_models = [('LogReg', log_reg), ('OrdLogReg', ord_log_reg)]
+    second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn), ('OrdLogReg', ord_log_reg)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)
@@ -133,12 +133,20 @@ if __name__ == '__main__':
             final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     # Advanced Part
-    # advanced_nn = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=5,
-    #                          batch_size=128, lr=1e-3, optimizer=None, num_units=None)
-    # advanced_model_result = second_approach_cv_advanced(advanced_nn, metrics, test_years)
-    # row_model_name = 'AdvancedNN'
-    # row_values = advanced_model_result
-    # final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
+    advanced_nn1 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape//2,
+                              num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape//8)
+    advanced_nn2 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=50, hidden_first_fc_dim=input_shape // 2,
+                              num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape//8)
+    advanced_nn3 = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape // 2,
+                              num_epochs=50, batch_size=64, lr=1e-3, optimizer=None, num_units=input_shape//64)
+    second_app_advanced_models = [('AdvNN1', advanced_nn1), ('AdvNN2', advanced_nn2), ('AdvNN3', advanced_nn3)]
+
+    for model_name, model in second_app_advanced_models:
+        advanced_model_result = second_approach_cv_advanced(model, metrics, test_years)
+        # row_model_name = 'AdvancedNN'
+        row_model_name = model_name
+        row_values = advanced_model_result
+        final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
 
     print(final_df)
     # with open('final_df_advanced.pkl', 'wb') as f:
