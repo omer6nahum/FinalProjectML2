@@ -79,7 +79,7 @@ class MatchesSequencesDataset(Dataset):
 
 
 class InnerAdvancedNN(nn.Module):
-    def __init__(self, input_shape, device, num_labels=3, num_units=None,
+    def __init__(self, input_shape, device, dropout, num_labels=3, num_units=None,
                  hidden_lstm_dim=20, hidden_first_fc_dim=None):
         super().__init__()
         self.device = device
@@ -89,19 +89,23 @@ class InnerAdvancedNN(nn.Module):
         self.num_units = input_shape // 2 if num_units is None else num_units
         self.hidden_lstm_dim = hidden_lstm_dim
         self.hidden_first_fc_dim = input_shape // 2 if hidden_first_fc_dim is None else hidden_first_fc_dim
+        self.dropout = dropout
         # layers
         self.num_labels = num_labels
         self.firstFC = nn.Sequential(
             nn.Linear(input_shape, self.hidden_first_fc_dim),
-            nn.Sigmoid()
+            nn.Sigmoid(),
+            nn.Dropout(self.dropout)
         )
         self.lstm_home = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
         self.lstm_away = nn.LSTM(input_size=3, hidden_size=self.hidden_lstm_dim, batch_first=True)
         self.sequential = nn.Sequential(
             nn.Linear(self.hidden_first_fc_dim + 2 * self.hidden_lstm_dim, self.num_units),
             nn.Sigmoid(),
+            nn.Dropout(self.dropout),
             nn.Linear(self.num_units, self.num_units),
             nn.Sigmoid(),
+            nn.Dropout(self.dropout),
             nn.Linear(self.num_units, num_labels)
         ).to(self.device)
         self.loss_function = nn.CrossEntropyLoss().to(self.device)
@@ -117,10 +121,28 @@ class InnerAdvancedNN(nn.Module):
         x = self.sequential(x)
         return x
 
+    def init_model_weights(self):
+        self.firstFC.apply(self.init_layer_weights)
+        self.init_layer_weights(self.lstm_home)
+        self.init_layer_weights(self.lstm_away)
+        self.sequential.apply(self.init_layer_weights)
+
+    def init_layer_weights(self, layer):
+        if isinstance(layer, nn.Linear):
+            inv_sqrt_k = 1 / np.sqrt(layer.weight.shape[1])
+            torch.nn.init.uniform_(layer.weight, -inv_sqrt_k, inv_sqrt_k)
+            torch.nn.init.normal_(layer.bias, -inv_sqrt_k, inv_sqrt_k)
+        elif isinstance(layer, nn.LSTM):
+            inv_sqrt_k = 1 / np.sqrt(self.hidden_lstm_dim)
+            torch.nn.init.uniform_(layer.weight_ih_l0, -inv_sqrt_k, inv_sqrt_k)
+            torch.nn.init.uniform_(layer.weight_hh_l0, -inv_sqrt_k, inv_sqrt_k)
+            torch.nn.init.uniform_(layer.bias_ih_l0, -inv_sqrt_k, inv_sqrt_k)
+            torch.nn.init.uniform_(layer.bias_hh_l0, -inv_sqrt_k, inv_sqrt_k)
+
 
 class AdvancedNN:
     def __init__(self, input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=None, num_epochs=100,
-                 batch_size=32, lr=1e-2, optimizer=None, num_units=None):
+                 batch_size=32, lr=1e-2, num_units=None, dropout=0.3):
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if use_cuda else "cpu")
         print(f'using {self.device}')
@@ -128,9 +150,9 @@ class AdvancedNN:
             torch.cuda.empty_cache()
         self.model = InnerAdvancedNN(input_shape=input_shape, device=self.device, num_labels=3,
                                      num_units=num_units, hidden_lstm_dim=hidden_lstm_dim,
-                                     hidden_first_fc_dim=hidden_first_fc_dim).to(self.device)
+                                     hidden_first_fc_dim=hidden_first_fc_dim, dropout=dropout).to(self.device)
         self.batch_size = batch_size
-        self.optimizer = optim.Adam(self.model.parameters(), lr=lr) if optimizer is None else optimizer
+        self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
         self.labels = {'H': 0, 'D': 1, 'A': 2}
         self.is_fitted = False
@@ -152,6 +174,7 @@ class AdvancedNN:
         dataset = MatchesSequencesDataset(X, y)
         trainloader = DataLoader(dataset, batch_size=1, shuffle=True)
         n = len(trainloader)
+        self.model.init_model_weights()
         self.model.train()
         for epoch in range(self.num_epochs):  # loop over the dataset multiple times
             t_start = time.time()
@@ -234,7 +257,7 @@ if __name__ == '__main__':
     # trainloader = DataLoader(dataset, batch_size=1, shuffle=True)
     # print()
     input_shape = x_train[0][0].shape[0]  # squad dim
-    model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=100, num_epochs=3,
+    model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=100, num_epochs=10,
                        batch_size=32, lr=1e-3, optimizer=None, num_units=None)
     model.fit(x_train, y_train)
     y_proba_pred = model.predict(x_test)

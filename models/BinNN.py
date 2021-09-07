@@ -1,48 +1,16 @@
 import numpy as np
-import pickle
-from sklearn.linear_model import LogisticRegression
 from Preprocess import load_train_test
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data.dataset import Dataset, TensorDataset
 from torch.utils.data import DataLoader
 from deps import LABELS, LABELS_REV
 import time
+from models.BasicNN import MatchesDataset
 
 
-class MatchesDataset(Dataset):
-    def __init__(self, matches, labels=None):
-        super().__init__()
-        self.matches_dataset = self.convert_matches_to_dataset(matches, labels)
-
-    def __len__(self):
-        return len(self.matches_dataset)
-
-    def __getitem__(self, index):
-        return self.matches_dataset[index]
-
-    def convert_matches_to_dataset(self, matches, labels):
-        """
-        converts matches(second approach representation) to tensor dataset
-        :param matches: squads representation
-        :param labels: match output
-        :return:
-        """
-        matches_list = list()
-        for match in matches:
-            matches_list.append(torch.tensor(match, dtype=torch.float, requires_grad=False))
-
-        all_matches = torch.stack(matches_list)
-        if labels is None:
-            return TensorDataset(all_matches)
-        else:
-            all_labels = torch.tensor(labels, dtype=torch.long, requires_grad=False)
-            return TensorDataset(all_matches, all_labels)
-
-
-class InnerBasicNN(nn.Module):
+class InnerBinNN(nn.Module):
     def __init__(self, input_shape, device, dropout, activations, num_labels=3, num_units=None):
         super().__init__()
         self.device = device
@@ -56,16 +24,19 @@ class InnerBasicNN(nn.Module):
                   activation_map[activations[0]](),
                   nn.Dropout(self.dropout)]
         for i in range(self.num_layers):
-            layers += [nn.Linear(self.num_units[i], self.num_units[i+1]),
-                       activation_map[activations[i+1]](),
+            layers += [nn.Linear(self.num_units[i], self.num_units[i + 1]),
+                       activation_map[activations[i + 1]](),
                        nn.Dropout(self.dropout)]
-        layers += [nn.Linear(self.num_units[-1], num_labels)]
+        layers += [nn.Linear(self.num_units[-1], 1)]
         self.sequential = nn.Sequential(*layers).to(self.device)
-        self.loss_function = nn.CrossEntropyLoss().to(self.device)
+        self.loss_function = nn.MSELoss()
 
     def forward(self, x):
         x = x.to(self.device)
-        return self.sequential(x)
+        p = self.sequential(x)
+        bin = torch.distributions.Binomial(self.num_labels - 1, p)
+        range_tensor = torch.arange(0, self.num_labels).to(self.device)
+        return torch.exp(bin.log_prob(range_tensor)).to(self.device)
 
     def init_model_weights(self):
         self.sequential.apply(self.init_layer_weights)
@@ -78,7 +49,7 @@ class InnerBasicNN(nn.Module):
             torch.nn.init.normal_(layer.bias, -inv_sqrt_k, inv_sqrt_k)
 
 
-class BasicNN:
+class BinNN:
     def __init__(self, input_shape, num_epochs=50, batch_size=32, lr=1e-3,
                  num_units=None, activations=None, dropout=0.3):
         use_cuda = torch.cuda.is_available()
@@ -86,12 +57,13 @@ class BasicNN:
         print(f'using {self.device}')
         if use_cuda:
             torch.cuda.empty_cache()
-        self.model = InnerBasicNN(input_shape, self.device, num_labels=3, num_units=num_units,
-                                  activations=activations, dropout=dropout).to(self.device)
+        self.model = InnerBinNN(input_shape, self.device, num_labels=3, num_units=num_units,
+                                activations=activations, dropout=dropout).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
         self.labels = LABELS
+        self.num_labels = len(self.labels)
         self.is_fitted = False
         self.num_epochs = num_epochs
 
@@ -119,9 +91,10 @@ class BasicNN:
                 inputs, labels = data
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
+                labels_one_hot = F.one_hot(labels, num_classes=self.num_labels).type(torch.float)
                 self.optimizer.zero_grad()
                 outputs = self.model(inputs).to(self.device)
-                loss = self.model.loss_function(outputs, labels).to(self.device)
+                loss = self.model.loss_function(outputs, labels_one_hot).to(self.device)
                 loss.backward()
                 self.optimizer.step()
                 running_loss += loss.item()
@@ -167,14 +140,6 @@ class BasicNN:
         self.is_fitted = True
 
 
-if __name__ == '__main__':
-    # BasicNN, Second Approach:
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21, approach=2, prefix_path='../')
-
-    model = BasicNN(input_shape=x_train.shape[1], num_epochs=0, lr=1e-3)
-    model.fit(x_train, y_train)
-    y_proba_pred = model.predict(x_test)
-    print(y_proba_pred)
 
 
 
