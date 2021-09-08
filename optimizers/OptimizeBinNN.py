@@ -25,8 +25,6 @@ if __name__ == '__main__':
     for i, (lr, num_epochs, batch_size, dropout, num_units, activations, loss) in enumerate(all_params):
         if len(num_units) != len(activations):
             continue
-        if i <= 960:
-            continue
         model = BinNN(input_shape=input_shape, num_epochs=num_epochs, lr=lr, batch_size=batch_size,
                       num_units=num_units, dropout=dropout, activations=activations, loss=loss)
         second_app_model_result = second_approach_cv(model, metrics, test_years, prefix_path='../')
@@ -35,9 +33,14 @@ if __name__ == '__main__':
         print(f'Param -set {i}/{n}')
         print(f'{(lr, num_epochs, batch_size, dropout, num_units, activations, loss)} :: {adj_acc}')
 
+        # periodically pickle mid results:
+        if i % 10 == 0:
+            with open('optimized_bin_nn.pkl', 'wb') as f:
+                pickle.dump(adj_acc_dict, f)
+
     print(adj_acc_dict)
-    # with open('optimized_bin_nn.pkl', 'wb') as f:
-    #     pickle.dump(adj_acc_dict, f)
+    with open('optimized_bin_nn.pkl', 'wb') as f:
+        pickle.dump(adj_acc_dict, f)
 
     print('\n\n\n-------------------------------------')
     for k, v in sorted(adj_acc_dict.items(), key=lambda x: x[1], reverse=True):

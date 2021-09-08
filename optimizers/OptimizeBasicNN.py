@@ -1,7 +1,5 @@
 from models.BasicNN import BasicNN
-from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error
 from Preprocess import load_x_y_z_pickle
-from tqdm import tqdm
 from CrossValidation import second_approach_cv
 from itertools import product
 import pickle
@@ -32,7 +30,6 @@ if __name__ == '__main__':
         adj_acc_dict[(lr, num_epochs, batch_size, dropout, tuple(num_units), tuple(activations))] = adj_acc
         print(f'Param -set {i}/{n}')
         print(f'{(lr, num_epochs, batch_size, dropout, num_units, activations)} :: {adj_acc}')
-
 
     print(adj_acc_dict)
     with open('optimized_basic_nn_new2.pkl', 'wb') as f:

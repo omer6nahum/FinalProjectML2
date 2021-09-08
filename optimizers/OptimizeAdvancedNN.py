@@ -1,6 +1,5 @@
 from models.AdvancedNN import AdvancedNN
 from Preprocess import load_x_y_z_pickle
-from tqdm import tqdm
 from CrossValidation import second_approach_cv_advanced
 from itertools import product
 import pickle
@@ -31,12 +30,15 @@ if __name__ == '__main__':
         print(f'Param set {i}/{n}')
         print(f'Final adj_acc for {(lr, num_epochs, batch_size, num_units_first_fc, num_units_fc, num_units_lstm, dropout)} : {adj_acc}')
 
+        # periodically pickle mid results:
+        if i % 10 == 0:
+            with open('optimized_advanced_nn_new.pkl', 'wb') as f:
+                pickle.dump(adj_acc_dict, f)
+
     print(adj_acc_dict)
     with open('optimized_advanced_nn_new.pkl', 'wb') as f:
         pickle.dump(adj_acc_dict, f)
-    #
+
     print('\n\n\n-------------------------------------')
     for k, v in sorted(adj_acc_dict.items(), key=lambda x: x[1], reverse=True):
         print(f'{k} ::: {v}')
-
-
