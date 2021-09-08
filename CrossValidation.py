@@ -5,6 +5,7 @@ from models.BasicNN import BasicNN
 from models.AdvancedNN import AdvancedNN
 from models.OrdLogReg import OrdLogReg
 from models.OrdNN import OrdNN
+from models.BinNN import BinNN
 from Preprocess import load_train_test
 import pandas as pd
 import numpy as np
@@ -45,7 +46,7 @@ def second_approach_cv(model, metrics, test_years, prefix_path=''):
              outer dictionary - <ranking_method>: <inner_dictionary>
              inner dictionary - <metric_name>: <avg_metric_result>
     """
-    assert type(model) in [LogReg, BasicNN, OrdLogReg, OrdNN]
+    assert type(model) in [LogReg, BasicNN, OrdLogReg, OrdNN, BinNN]
     assert not model.is_fitted
 
     mid_res = {'expectation': [], 'simulation': []}

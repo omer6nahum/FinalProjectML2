@@ -11,7 +11,7 @@ from models.BasicNN import MatchesDataset
 
 
 class InnerBinNN(nn.Module):
-    def __init__(self, input_shape, device, dropout, activations, num_labels=3, num_units=None):
+    def __init__(self, input_shape, device, dropout, activations, loss, num_labels=3, num_units=None):
         super().__init__()
         self.device = device
         self.num_layers = 2 if num_units is None else len(num_units) - 1
@@ -27,16 +27,22 @@ class InnerBinNN(nn.Module):
             layers += [nn.Linear(self.num_units[i], self.num_units[i + 1]),
                        activation_map[activations[i + 1]](),
                        nn.Dropout(self.dropout)]
-        layers += [nn.Linear(self.num_units[-1], 1)]
+        layers += [nn.Linear(self.num_units[-1], 1),
+                   nn.Sigmoid()]
         self.sequential = nn.Sequential(*layers).to(self.device)
-        self.loss_function = nn.MSELoss()
+        self.loss_function = nn.MSELoss() if loss == 'mse' else nn.NLLLoss()
+        self.loss = loss
 
     def forward(self, x):
         x = x.to(self.device)
         p = self.sequential(x)
+        # create binomial distribution from p
         bin = torch.distributions.Binomial(self.num_labels - 1, p)
         range_tensor = torch.arange(0, self.num_labels).to(self.device)
-        return torch.exp(bin.log_prob(range_tensor)).to(self.device)
+        res = bin.log_prob(range_tensor).to(self.device)
+        if self.loss == 'mse':
+            res = torch.exp(res).to(self.device)
+        return res
 
     def init_model_weights(self):
         self.sequential.apply(self.init_layer_weights)
@@ -51,14 +57,15 @@ class InnerBinNN(nn.Module):
 
 class BinNN:
     def __init__(self, input_shape, num_epochs=50, batch_size=32, lr=1e-3,
-                 num_units=None, activations=None, dropout=0.3):
+                 num_units=None, activations=None, dropout=0.3, loss='mse'):
+        assert loss in ['mse', 'nll']
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if use_cuda else "cpu")
         print(f'using {self.device}')
         if use_cuda:
             torch.cuda.empty_cache()
         self.model = InnerBinNN(input_shape, self.device, num_labels=3, num_units=num_units,
-                                activations=activations, dropout=dropout).to(self.device)
+                                activations=activations, dropout=dropout, loss=loss).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
@@ -66,6 +73,7 @@ class BinNN:
         self.num_labels = len(self.labels)
         self.is_fitted = False
         self.num_epochs = num_epochs
+        self.loss = loss
 
     def fit(self, X, y):
         """
@@ -91,10 +99,11 @@ class BinNN:
                 inputs, labels = data
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
-                labels_one_hot = F.one_hot(labels, num_classes=self.num_labels).type(torch.float)
+                if self.loss == 'mse':
+                    labels = F.one_hot(labels, num_classes=self.num_labels).type(torch.float)
                 self.optimizer.zero_grad()
                 outputs = self.model(inputs).to(self.device)
-                loss = self.model.loss_function(outputs, labels_one_hot).to(self.device)
+                loss = self.model.loss_function(outputs, labels).to(self.device)
                 loss.backward()
                 self.optimizer.step()
                 running_loss += loss.item()
@@ -118,7 +127,9 @@ class BinNN:
         with torch.no_grad():
             for inputs in testloader:
                 inputs = inputs[0].to(self.device)
-                proba_output = F.softmax(self.model(inputs), dim=1).to('cpu')
+                proba_output = self.model(inputs).to('cpu')
+                if self.loss == 'nll':
+                    proba_output = torch.exp(proba_output)
                 proba_outputs.append(proba_output)
         return np.array(torch.cat(proba_outputs, dim=0))
 

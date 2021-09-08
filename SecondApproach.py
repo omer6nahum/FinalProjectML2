@@ -9,8 +9,9 @@ import numpy as np
 from collections import deque
 from models.AdvancedNN import AdvancedNN
 from models.OrdNN import OrdNN
+from models.BinNN import BinNN
 
-model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg, OrdNN]
+model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg, OrdNN, BinNN]
 ranking_method_options = ['expectation', 'simulation', 'advanced_simulation']
 WIN_VEC = np.array([1, 0, 0])
 DRAW_VEC = np.array([0, 1, 0])
