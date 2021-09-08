@@ -1,10 +1,5 @@
 import numpy as np
 import pandas as pd
-from Preprocess import load_train_test
-from models.LogReg import LogReg
-from models.LinReg import LinReg
-from FirstApproach import FirstApproach
-from SecondApproach import SecondApproach
 
 TEAM_NAME, PTS, RANK, ADJ_RANK = 'team_name', 'PTS', 'rank', 'adj_rank'
 
@@ -55,19 +50,6 @@ def weighted_hamming(predicted_table, ground_truth):
         normalized_dist = curr_dist / max(ground_truth_index, 20 - ground_truth_index)
         dist += normalized_dist
     return dist
-
-
-def hamming(table1, table2):
-    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
-    teams = set(table1[TEAM_NAME])
-    dist = 0
-    for team in teams:
-        dist += abs(pd.Index(table1[TEAM_NAME]).get_loc(team) - pd.Index(table2[TEAM_NAME]).get_loc(team))
-    return dist
-
-
-def hamming_normalized(table1, table2):
-    return (10*20-hamming(table1, table2)) / (10*20)
 
 
 def adj_hamming(table1, table2, return_rank=False):
@@ -121,62 +103,3 @@ def points_error(table1, table2):
     for team in set(table1[TEAM_NAME]):
          error += np.abs(diff_in_val(table1, table2, team, PTS))
     return error/20
-
-
-def points_regression(table1, table2):
-    assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
-    SR = 0
-    for team in set(table1[TEAM_NAME]):
-         SR += diff_in_val(table1, table2, team, PTS) ** 2
-    return np.sqrt(SR)
-
-
-if __name__ == '__main__':
-    gd_table = pd.read_csv('data/tables/table_21.csv')[['team_name', 'PTS']]
-    print(gd_table)
-    print()
-
-    x_train_1, x_test_1, y_train_1, \
-    y_test_1, z_train_1, z_test_1 = load_train_test(test_year=21,
-                                                    approach=1,
-                                                    prefix_path='')
-    lin_reg = LinReg()
-    lin_reg.load_params('pickles/models/lin_reg_ver1.pkl')
-    tbl1 = FirstApproach(lin_reg).predict_table(x_test_1, z_test_1)
-    print(tbl1)
-    print()
-
-    x_train_2, x_test_2, y_train_2, \
-    y_test_2, z_train_2, z_test_2 = load_train_test(test_year=21,
-                                                    approach=2,
-                                                    prefix_path='')
-    log_reg = LogReg()
-    log_reg.load_params('pickles/models/log_reg_ver1.pkl')
-    tbl2 = SecondApproach(log_reg).predict_table(x_test_2, z_test_2, ranking_method='expectation')
-    print(tbl2)
-    print()
-
-    # Test hamming eval functions:
-    all_metrics = [hamming,
-                   hamming_normalized,
-                   adj_hamming,
-                   adj_hamming_normalized,
-                   weighted_hamming,
-                   adj_MAP,
-                   adj_MAP_normalized,
-                   spearman,
-                   #points_regression,
-                   points_error,
-                   ]
-    all_tables = {"lin_reg": tbl1, "log_reg": tbl2, "gt": gd_table}
-    metrics = pd.DataFrame({m.__name__: [m(t, gd_table) for t in all_tables.values()] for m in all_metrics},
-                           index=all_tables.keys())
-    print(metrics.T)
-    # print(f'hamming(ground truth vs. lin_reg): {hamming(tbl1, gd_table)}')
-    # print(f'hamming(ground truth vs. log_reg): {hamming(tbl2, gd_table)}')
-    # print(f'hamming_normalized(ground truth vs. lin_reg): {hamming_normalized(tbl1, gd_table)}')
-    # print(f'hamming_normalized(ground truth vs. log_reg): {hamming_normalized(tbl2, gd_table)}')
-    # print(f'weighted_hamming(ground truth vs. lin_reg): {weighted_hamming(tbl1, gd_table)}')
-    # print(f'weighted_hamming(ground truth vs. log_reg): {weighted_hamming(tbl2, gd_table)}')
-
-
