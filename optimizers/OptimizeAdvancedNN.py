@@ -24,7 +24,8 @@ if __name__ == '__main__':
         model = AdvancedNN(input_shape=input_shape, num_epochs=num_epochs, dropout=dropout,
                            lr=lr, batch_size=batch_size, num_units=num_units_fc,
                            hidden_first_fc_dim=num_units_first_fc, hidden_lstm_dim=num_units_lstm)
-        second_app_model_result = second_approach_cv_advanced(model, metrics, test_years, prefix_path='../')
+        second_app_model_result = second_approach_cv_advanced(model, metrics, test_years,
+                                                              prefix_path='../', sample=True)
         adj_acc = second_app_model_result['adj_accuracy']
         adj_acc_dict[(lr, num_epochs, batch_size, num_units_first_fc, num_units_fc, num_units_lstm)] = adj_acc
         print(f'Param set {i}/{n}')

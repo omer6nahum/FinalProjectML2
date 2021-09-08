@@ -77,7 +77,7 @@ def second_approach_cv(model, metrics, test_years, prefix_path=''):
     return res
 
 
-def second_approach_cv_advanced(model, metrics, test_years, prefix_path=''):
+def second_approach_cv_advanced(model, metrics, test_years, prefix_path='', sample=False):
     """
     Run leave-one-out cross validation over the test years and evaluate
     :param model: model for predicting matches outcome probabilities
@@ -94,6 +94,11 @@ def second_approach_cv_advanced(model, metrics, test_years, prefix_path=''):
                                                                             approach=2,
                                                                             part='advanced',
                                                                             prefix_path=prefix_path)
+
+        if sample:
+            idx = np.random.choice(range(0, len(y_train)), replace=False, size=len(y_train) // 5)
+            x_train, y_train, z_train = [x_train[i] for i in idx], y_train[idx], z_train[idx]
+
         model.fit(x_train, y_train)
         second_app = SecondApproach(model)
 
