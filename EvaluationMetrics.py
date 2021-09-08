@@ -103,3 +103,7 @@ def points_error(table1, table2):
     for team in set(table1[TEAM_NAME]):
          error += np.abs(diff_in_val(table1, table2, team, PTS))
     return error/20
+
+
+def correct_champion(table1, table2):
+    return int(table1.iloc[0][TEAM_NAME] == table2.iloc[0][TEAM_NAME])

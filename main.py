@@ -4,7 +4,7 @@ from models.BasicNN import BasicNN
 from models.AdvancedNN import AdvancedNN
 from models.OrdLogReg import OrdLogReg
 from models.OrdNN import OrdNN
-from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error
+from EvaluationMetrics import adj_hamming_normalized, adj_MAP_normalized, spearman, points_error, correct_champion
 from Preprocess import load_x_y_z_pickle
 import pandas as pd
 from CrossValidation import first_approach_cv, second_approach_cv, second_approach_cv_advanced
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     test_years = range(15, 22)
     metrics = [('adj_hamming', adj_hamming_normalized), ('adj_MAP', adj_MAP_normalized),
-               ('Spearman', spearman), ('L1_distance', points_error)]
+               ('Spearman', spearman), ('L1_distance', points_error), ('% correct champion', correct_champion)]
 
     # Basic Part
     # -- First Approach
