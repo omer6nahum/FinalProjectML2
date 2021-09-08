@@ -27,17 +27,10 @@ if __name__ == '__main__':
     # -- Second approach
     input_shape = load_x_y_z_pickle(15, 2)[0].shape[1]
     log_reg = LogReg()
-    basic_nn1 = BasicNN(input_shape=input_shape, num_epochs=50, lr=1e-3, batch_size=32,
-                        num_units=[250, 50], dropout=0.3, activations=['sigmoid']*2)
-    basic_nn2 = BasicNN(input_shape=input_shape, num_epochs=75, lr=1e-3, batch_size=32,
-                        num_units=[250, 125, 50, 25], dropout=0.5, activations=['sigmoid']*4)
-    basic_nn3 = BasicNN(input_shape=input_shape, num_epochs=75, lr=1e-3, batch_size=64,
-                        num_units=[100, 100], dropout=0.1, activations=['sigmoid']*2)
-    basic_nn4 = BasicNN(input_shape=input_shape, num_epochs=25, lr=1e-3, batch_size=16,
-                        num_units=[250, 50], dropout=0.3, activations=['sigmoid'] * 2)
+    basic_nn = BasicNN(input_shape=input_shape, num_epochs=75, lr=1e-3, batch_size=64,
+                       num_units=[100, 100], dropout=0.1, activations=['sigmoid']*2)
 
-    second_app_models = [('LogReg', log_reg), ('BasicNN1', basic_nn1), ('BasicNN2', basic_nn2),
-                         ('BasicNN3', basic_nn3), ('BasicNN4', basic_nn4)]
+    second_app_models = [('LogReg', log_reg), ('BasicNN', basic_nn)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)
@@ -45,7 +38,6 @@ if __name__ == '__main__':
             row_model_name = f'{model_name}_{ranking_method}'
             row_values = results
             final_df = final_df.append(pd.DataFrame(row_values, index=[row_model_name]))
-            print(final_df)  # todo: remove
 
     # Advanced Part
     # advanced_nn = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=3, hidden_first_fc_dim=input_shape // 2,
@@ -57,11 +49,9 @@ if __name__ == '__main__':
 
     # Creative Part
     ord_log_reg = OrdLogReg()
-    ord_nn1 = OrdNN(input_shape=input_shape, num_epochs=50, lr=1e-3, batch_size=32,
-                    num_units=[250, 50], dropout=0.3, activations=['sigmoid'] * 2)
-    ord_nn3 = OrdNN(input_shape=input_shape, num_epochs=75, lr=1e-3, batch_size=64,
-                    num_units=[100, 100], dropout=0.1, activations=['sigmoid'] * 2)
-    second_app_models = [('OrdLogReg', ord_log_reg), ('OrdNN1', ord_nn1), ('OrdNN3', ord_nn3)]
+    ord_nn = OrdNN(input_shape=input_shape, num_epochs=75, lr=1e-3, batch_size=64,
+                   num_units=[100, 100], dropout=0.1, activations=['sigmoid'] * 2)
+    second_app_models = [('OrdLogReg', ord_log_reg), ('OrdNN', ord_nn)]
 
     for model_name, model in second_app_models:
         second_app_model_result = second_approach_cv(model, metrics, test_years)

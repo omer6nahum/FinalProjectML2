@@ -218,6 +218,7 @@ class AdvancedNN:
         dataset = MatchesSequencesDataset(X_new)
         testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
+        self.model.eval()
         with torch.no_grad():
             for inputs in testloader:
                 squads, home_sequence, home_sequence_len, away_sequence, away_sequence_len, = inputs

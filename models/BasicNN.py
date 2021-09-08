@@ -142,6 +142,7 @@ class BasicNN:
         dataset = MatchesDataset(X_new)
         testloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
 
+        self.model.eval()
         with torch.no_grad():
             for inputs in testloader:
                 inputs = inputs[0].to(self.device)
