@@ -27,7 +27,7 @@ if __name__ == '__main__':
         second_app_model_result = second_approach_cv_advanced(model, metrics, test_years,
                                                               prefix_path='../', sample=True)
         adj_acc = second_app_model_result['adj_accuracy']
-        adj_acc_dict[(lr, num_epochs, batch_size, num_units_first_fc, num_units_fc, num_units_lstm)] = adj_acc
+        adj_acc_dict[(lr, num_epochs, batch_size, num_units_first_fc, num_units_fc, num_units_lstm, dropout)] = adj_acc
         print(f'Param set {i}/{n}')
         print(f'Final adj_acc for {(lr, num_epochs, batch_size, num_units_first_fc, num_units_fc, num_units_lstm, dropout)} : {adj_acc}')
 

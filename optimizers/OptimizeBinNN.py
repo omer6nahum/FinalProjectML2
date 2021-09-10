@@ -12,7 +12,7 @@ if __name__ == '__main__':
     lr_list = [1e-3]
     num_epochs_list = [25, 50, 75]
     batch_size_list = [16, 32, 64]
-    dropout_list = [0.1, 0.3, 0.5]
+    dropout_list = [0.1, 0.3]
     num_units_list = [[100, 100], [250, 125, 50, 25], [250, 50], [100, 50, 20]]
     activation_list = [['sigmoid', 'sigmoid'],
                        ['sigmoid', 'relu', 'sigmoid'],
