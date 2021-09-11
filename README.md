@@ -9,6 +9,8 @@ The final season league table is induced by the cumulative number of points for 
 The project goal is to suggest and evaluate several ML approaches for predicting the final English Premier League table based on data regarding the contested teams squads and season matches. 
 This task is highly important for various organizations, including football clubs, media channels, gambling agencies, etc.
 
+For more information see the [Full Project Report](https://github.com/omer6nahum/FinalProjectML2/blob/master/Project%20Final%20Report.pdf).
+
 ## Authors
 * Omer Nahum
 * Omer Madmon
