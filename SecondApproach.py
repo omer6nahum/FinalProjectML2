@@ -1,15 +1,15 @@
+import numpy as np
 import pandas as pd
 from models.LogReg import LogReg
 from models.OrdLogReg import OrdLogReg
-from Preprocess import load_train_test
-from random import random
 from models.BasicNN import BasicNN
-from deps import LABELS, LABELS_REV
-import numpy as np
-from collections import deque
 from models.AdvancedNN import AdvancedNN
 from models.OrdNN import OrdNN
 from models.BinNN import BinNN
+from random import random
+from deps import LABELS_REV
+from collections import deque
+
 
 model_options = [LogReg, BasicNN, AdvancedNN, OrdLogReg, OrdNN, BinNN]
 ranking_method_options = ['expectation', 'simulation', 'advanced_simulation']
@@ -119,7 +119,6 @@ class SecondApproach:
         :param num_simulations: how much simulations to run
         :return: a dictionary mapping teams to expected number of points (mean of all simulations).
         """
-
         table = {team: 0 for team in teams}
         for simulation in range(num_simulations):
             for pr, match_teams in zip(probs, z_test):
@@ -149,7 +148,6 @@ class SecondApproach:
         table is a dictionary mapping teams to expected number of points.
         accuracy and adj_accuracy are mean of all simulations
         """
-
         assert isinstance(self.model, AdvancedNN)
 
         table = {team: 0 for team in teams}
@@ -215,11 +213,10 @@ class SecondApproach:
     @staticmethod
     def update_accuracies(result, pr, true_outcome):
         """
-
         :param result: a number in [0, 1] representing the predicted outcome of the match.
         :param pr: predicted probabilities for match outcome
         :param true_outcome: either {'H', 'D', 'A'}
-        :return: numbers to add to accuracy and ajusted_accuracy
+        :return: numbers to add to accuracy and adjusted_accuracy
         """
         add_accuracy = 0
         add_adj_accuracy = 0
@@ -247,26 +244,3 @@ class SecondApproach:
                 add_adj_accuracy = 0.5
 
         return add_accuracy, add_adj_accuracy
-
-
-if __name__ == '__main__':
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
-                                                                        approach=2,
-                                                                        part='basic',
-                                                                        prefix_path='')
-
-    # model = LogReg()
-    model = BasicNN(input_shape=x_train.shape[1], lr=1e-3, num_epochs=50, batch_size=128, num_units=4150)
-    # input_shape = x_train[0][0].shape[0]  # squad dim
-    # model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=input_shape//2, num_epochs=50,
-    #                    batch_size=128, lr=1e-3, optimizer=None, num_units=None)
-    model.fit(x_train, y_train)
-    second_approach = SecondApproach(model)
-    pred_table, _ = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
-    print(pred_table)
-    # pred_table_expectation = second_approach.predict_table(x_test, z_test, ranking_method='expectation')
-    # print(pred_table_expectation)
-    # pred_table_simulation = second_approach.predict_table(x_test, z_test, ranking_method='simulation')
-    # print(pred_table_simulation)
-    # acc = second_approach.accuracy(x_test, y_test)
-    # print(acc)

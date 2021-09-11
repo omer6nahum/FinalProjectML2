@@ -1,11 +1,10 @@
 import numpy as np
-from Preprocess import load_train_test
+import time
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from deps import LABELS, LABELS_REV
-import time
+from deps import LABELS
 from models.BasicNN import InnerBasicNN, MatchesDataset
 
 
@@ -24,7 +23,6 @@ class OrdNN:
         self.batch_size = batch_size
         self.optimizer1 = optim.Adam(self.model1.parameters(), lr=lr)
         self.optimizer2 = optim.Adam(self.model2.parameters(), lr=lr)
-        # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
         self.labels = LABELS
         self.is_fitted = False
         self.num_epochs = num_epochs
@@ -136,16 +134,6 @@ class OrdNN:
         """
         self.model = torch.load(path)
         self.is_fitted = True
-
-
-if __name__ == '__main__':
-    # OrdBasicNN, Second Approach:
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21, approach=2, prefix_path='../')
-
-    model = OrdNN(input_shape=x_train.shape[1], num_epochs=1, lr=1e-3)
-    model.fit(x_train, y_train)
-    y_proba_pred = model.predict(x_test)
-    print(y_proba_pred)
 
 
 

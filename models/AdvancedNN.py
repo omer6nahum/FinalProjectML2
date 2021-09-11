@@ -1,13 +1,12 @@
 import numpy as np
-from Preprocess import load_train_test
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data.dataset import Dataset, TensorDataset
 from torch.utils.data import DataLoader
-from deps import LABELS, LABELS_REV
-import time
+from deps import LABELS
 
 
 class MatchesSequencesDataset(Dataset):
@@ -89,8 +88,8 @@ class InnerAdvancedNN(nn.Module):
         self.num_units = input_shape // 2 if num_units is None else num_units
         self.hidden_lstm_dim = hidden_lstm_dim
         self.hidden_first_fc_dim = input_shape // 2 if hidden_first_fc_dim is None else hidden_first_fc_dim
-        self.dropout = dropout
         # layers
+        self.dropout = dropout
         self.num_labels = num_labels
         self.firstFC = nn.Sequential(
             nn.Linear(input_shape, self.hidden_first_fc_dim),
@@ -153,8 +152,7 @@ class AdvancedNN:
                                      hidden_first_fc_dim=hidden_first_fc_dim, dropout=dropout).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
-        # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
-        self.labels = {'H': 0, 'D': 1, 'A': 2}
+        self.labels = LABELS
         self.is_fitted = False
         self.num_epochs = num_epochs
 
@@ -213,7 +211,6 @@ class AdvancedNN:
                       squads representation, home team sequence, away team sequence
         :return: predicted probability distribution over the explained variable labels (for each new point) as tensor.
         """
-
         proba_outputs = []
         dataset = MatchesSequencesDataset(X_new)
         testloader = DataLoader(dataset, batch_size=1, shuffle=False)
@@ -248,21 +245,3 @@ class AdvancedNN:
         """
         self.model = torch.load(path)
         self.is_fitted = True
-
-
-if __name__ == '__main__':
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21, approach=2,
-                                                                        part='advanced', prefix_path='../')
-    # y_train = np.array([LABELS[y_i] for y_i in y_train])
-    # dataset = MatchesSequencesDataset(x_train, y_train)
-    # trainloader = DataLoader(dataset, batch_size=1, shuffle=True)
-    # print()
-    input_shape = x_train[0][0].shape[0]  # squad dim
-    model = AdvancedNN(input_shape=input_shape, hidden_lstm_dim=20, hidden_first_fc_dim=100, num_epochs=10,
-                       batch_size=32, lr=1e-3, optimizer=None, num_units=None)
-    model.fit(x_train, y_train)
-    y_proba_pred = model.predict(x_test)
-    print(y_proba_pred)
-
-
-

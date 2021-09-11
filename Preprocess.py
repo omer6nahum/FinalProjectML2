@@ -5,12 +5,11 @@ import pickle
 
 def create_squad(team_in_season_df, k=None, prefix_path=''):
     """
-    :param team_name:
-    :param year: season year (2 figures, e.g: 15)
+    :param team_in_season_df: dataframe contains team's data in a season
     :param k: a dictionary with k per position_category. e.g.: {'gk': 3}
+    :param prefix_path: prefix path to data directory
     :return: squad representation
     """
-
     if k is None:
         k = {'gk': 2,
              'def': 6,
@@ -139,6 +138,7 @@ def create_x_y_z(year, approach, part='basic', prefix_path=''):
     :param year: 2 digits
     :param approach: can be one of {1, 2}
     :param part: can be one of {'basic', 'advanced'}
+    :param prefix_path: prefix path to data directory
     :return:
     """
     if part == 'basic':
@@ -208,20 +208,4 @@ def load_x_y_z_pickle(year, approach, part='basic', dir_path=None):
     path = dir_path + f'year_{year}_approach_{approach}_{part}.pkl'
     with open(path, 'rb') as f:
         data = pickle.load(f)
-    # data = x_train, x_test, y_train, y_test, z_train, z_test
     return data
-
-
-if __name__ == '__main__':
-    # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=1)
-    # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
-    # x_train, x_test, y_train, y_test, z_train, z_test = create_train_test(test_year=21, approach=2)
-    # print(f'x={x_train.shape}, y={y_train.shape}, z={z_train.shape}')
-    # x, y, z = create_x_y_z(15, 2, part='advanced', prefix_path='')
-
-    for year in range(15, 22):
-        for approach in [2, 1]:
-            dump_x_y_z_pickle(year, approach, part='basic')
-        dump_x_y_z_pickle(year, approach=2, part='advanced')
-
-

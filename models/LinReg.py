@@ -1,9 +1,7 @@
 import pickle
 import numpy as np
-import pandas as pd
 from scipy.linalg import pinv2
 from numpy.linalg import LinAlgError, inv
-from Preprocess import load_train_test
 
 
 class LinReg:
@@ -60,27 +58,3 @@ class LinReg:
         with open(path, 'rb') as f:
             self.beta = pickle.load(f)
         self.is_fitted = True
-
-
-if __name__ == '__main__':
-    # LinReg, First Approach:
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
-                                                                          approach=1,
-                                                                          prefix_path='../')
-
-    # Fit and predict:
-    lin_reg = LinReg()
-    lin_reg.fit(x_train, y_train)
-    y_pred = lin_reg.predict(x_test)
-
-    # Create tables
-    clubs_2021_pred = sorted(zip(z_test, y_pred), key=lambda x: x[1], reverse=True)
-    clubs_2021_true = sorted(zip(z_test, y_test), key=lambda x: x[1], reverse=True)
-    predicted_table = pd.DataFrame(data=clubs_2021_pred)
-    true_table = pd.DataFrame(data=clubs_2021_true)
-    print(predicted_table)
-    print(true_table)
-
-    # Pickle and load model params:
-    lin_reg.save_params('../pickles/models/lin_reg_ver1.pkl')
-    lin_reg.load_params('../pickles/models/lin_reg_ver1.pkl')

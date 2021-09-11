@@ -40,6 +40,7 @@ def add_regular_ranks(table1, table2):
 
 
 def weighted_hamming(predicted_table, ground_truth):
+    # sums the abs diff of all teams' ranks
     assert set(predicted_table[TEAM_NAME]) == set(ground_truth[TEAM_NAME])
     teams = set(predicted_table[TEAM_NAME])
     dist = 0
@@ -53,6 +54,7 @@ def weighted_hamming(predicted_table, ground_truth):
 
 
 def adj_hamming(table1, table2, return_rank=False):
+    # sums the abs diff of all teams' adjusted ranks
     adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
     dist = 0
     for team in set(table1[TEAM_NAME]):
@@ -68,6 +70,8 @@ def adj_hamming_normalized(table1, table2):
 
 
 def adj_MAP(table, ground_truth_table):
+    # A weighted mean of P@k, where P@k is defined as the cardinality of the intersection
+    # between the top k teams in table and top k teams in ground_truth_table
     assert set(table[TEAM_NAME]) == set(ground_truth_table[TEAM_NAME])
     map = 0
     for i in range(1,len(table[TEAM_NAME])+1):
@@ -87,6 +91,7 @@ def adj_MAP_normalized(table, ground_truth_table):
 
 
 def spearman(table1, table2):
+    # Spearman correlation using adjusted ranks instead of standard ranks
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     adj_table1, adj_table2, rank = add_adjusted_ranks(table1, table2, return_rank=True)
     sum_Di = 0
@@ -98,12 +103,9 @@ def spearman(table1, table2):
 
 
 def points_error(table1, table2):
+    # L1 norm between points vectors of table1 and table2
     assert set(table1[TEAM_NAME]) == set(table2[TEAM_NAME])
     error = 0
     for team in set(table1[TEAM_NAME]):
          error += np.abs(diff_in_val(table1, table2, team, PTS))
     return error/20
-
-
-def correct_champion(table1, table2):
-    return int(table1.iloc[0][TEAM_NAME] == table2.iloc[0][TEAM_NAME])

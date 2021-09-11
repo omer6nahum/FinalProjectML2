@@ -1,8 +1,7 @@
 import numpy as np
 import pickle
 from sklearn.linear_model import LogisticRegression
-from Preprocess import load_train_test
-from deps import LABELS, LABELS_REV
+from deps import LABELS
 
 
 class OrdLogReg:
@@ -74,26 +73,3 @@ class OrdLogReg:
         with open(path, 'rb') as f:
             self.model1, self.model2 = pickle.load(f)
         self.is_fitted = True
-
-
-if __name__ == '__main__':
-    # LogReg, Second Approach:
-    model = OrdLogReg()
-    x_train, x_test, y_train, y_test, z_train, z_test = load_train_test(test_year=21,
-                                                                        approach=2,
-                                                                        prefix_path='../')
-    model.fit(x_train, y_train)
-    pred = model.predict(x_test)
-    y_pred = model.predict(x_test)
-    print(y_pred)
-
-    res = 0
-    n = 0
-    for i, (pred, z, y_true) in enumerate(zip(y_pred, z_test, y_test)):
-        n += 1
-        # print(int(torch.argmax(pred))
-        res += 1 if y_true == LABELS_REV[int(np.argmax(pred))] else 0
-    print(res/n)
-
-    # Pickle model:
-    # model.save_params('../pickles/models/log_reg_ver1.pkl')

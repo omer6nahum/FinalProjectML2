@@ -1,12 +1,11 @@
 import numpy as np
-from Preprocess import load_train_test
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from deps import LABELS, LABELS_REV
-import time
+from deps import LABELS
 from models.BasicNN import MatchesDataset
 
 
@@ -68,7 +67,6 @@ class BinNN:
                                 activations=activations, dropout=dropout, loss=loss).to(self.device)
         self.batch_size = batch_size
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
-        # self.lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=self.optimizer, gamma=0.8)
         self.labels = LABELS
         self.num_labels = len(self.labels)
         self.is_fitted = False
@@ -150,8 +148,3 @@ class BinNN:
         """
         self.model = torch.load(path)
         self.is_fitted = True
-
-
-
-
-
